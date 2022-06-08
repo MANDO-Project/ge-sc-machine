@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function permute(source, keys) {\n  return Array.from(keys, function (key) {\n    return source[key];\n  });\n}","map":null,"metadata":{},"sourceType":"module"}

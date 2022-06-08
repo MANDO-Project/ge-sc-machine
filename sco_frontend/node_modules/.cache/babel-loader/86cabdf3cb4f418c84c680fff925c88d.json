@@ -1,0 +1,1 @@
+{"ast":null,"code":"var index = function index(p) {\n  return p instanceof Function ? p // fn\n  : typeof p === 'string' ? function (obj) {\n    return obj[p];\n  } // property name\n  : function (obj) {\n    return p;\n  };\n}; // constant\n\n\nexport default index;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function ascending(a, b) {\n  return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;\n}","map":null,"metadata":{},"sourceType":"module"}

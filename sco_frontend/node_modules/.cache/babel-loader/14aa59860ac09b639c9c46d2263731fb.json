@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var durationSecond = 1000;\nexport var durationMinute = durationSecond * 60;\nexport var durationHour = durationMinute * 60;\nexport var durationDay = durationHour * 24;\nexport var durationWeek = durationDay * 7;\nexport var durationMonth = durationDay * 30;\nexport var durationYear = durationDay * 365;","map":null,"metadata":{},"sourceType":"module"}
