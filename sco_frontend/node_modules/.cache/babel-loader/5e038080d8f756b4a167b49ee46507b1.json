@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function (event) {\n  var sourceEvent;\n\n  while (sourceEvent = event.sourceEvent) {\n    event = sourceEvent;\n  }\n\n  return event;\n}","map":null,"metadata":{},"sourceType":"module"}
