@@ -22,14 +22,13 @@ class LINE_NODE_CLASSIFIER_CONFIG(BaseSettings):
 class Settings(BaseSettings):
     SERVER_NAME = 'sco'
     VERSION: str = 'v1.0.0'
-    DEVICE: str = 'GPU' if check_gpu() else 'CPU'
+    DEVICE: str = 'cuda:0' if check_gpu() else 'cpu'
     SERVER_TAG: str = f'{SERVER_NAME}-{VERSION}-{DEVICE}'
     SERVICE: str = 'vulnerability'
     TASK: str = 'detection'
     PREFIX: str = f'/{VERSION}/{SERVICE}/{TASK}'
     LINE = LINE_NODE_CLASSIFIER_CONFIG()
     API_KEY = 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'
-    DEVICE: str = 'cuda:0' if check_gpu() else 'cpu'
     class Config:
         env_file = '.env'
 

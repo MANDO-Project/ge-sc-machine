@@ -29,7 +29,7 @@ async def check_device():
         device = torch.cuda.current_device()
         device_name = torch.cuda.get_device_name(0)
     else:
-        device_name = 'CPU'
+        device_name = 'cpu'
     return {'device': device_name}
 
 

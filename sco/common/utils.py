@@ -5,8 +5,8 @@ import torch
 import numpy as np
 from logbook import Logger
 
-sys.path.append('/home/minhnn/minhnn/ICSE/ge-sc') 
-from sco_models.model_node_classification import HANVulNodeClassifier
+sys.path.append('/Users/minh/Documents/2022/smart_contract/mando/ge-sc/')
+from sco_models.model_node_classification import MANDONodeClassifier
 
 logger = Logger(__name__)
 
@@ -16,8 +16,8 @@ def check_gpu():
 
 
 def init_line_node_classificator(ckpt, compressed_graph, dataset, feature_extractor, device):
-    model = HANVulNodeClassifier(compressed_graph, dataset, feature_extractor, node_feature='line', device=device)
-    model.load_state_dict(torch.load(ckpt))
+    model = MANDONodeClassifier(compressed_graph, dataset, feature_extractor, node_feature='nodetype', device=device)
+    model.load_state_dict(torch.load(ckpt, map_location=torch.device(device)))
     model.to(device)
     smart_contracts = [f for f in os.listdir(dataset) if f.endswith('.sol')]
     return model, smart_contracts
