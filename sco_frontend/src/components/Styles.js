@@ -13,7 +13,8 @@ const btn = (light, dark) => css`
   background-image: linear-gradient(${light}, ${dark});
   border: 1px solid ${dark};
   &:hover {
-    background-image: linear-gradient(${light}, ${dark});
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
     &[disabled] {
       background-image: linear-gradient(${light}, ${dark});
     }
@@ -145,6 +146,13 @@ export default styled.div`
       padding: 20px;
       overflow: scroll;
       height: 500px;
+      p{
+        margin : 0px;
+      }
+      .color-red{
+        color:red;
+      }
     }
+    
   }
 `;

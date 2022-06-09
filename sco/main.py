@@ -8,12 +8,12 @@ from fastapi_rfc7807 import middleware
 
 from .api.common import app
 from .api.views import line_level_bug
-from .config import settings
+from .config import settings_access_contro
 
 
 logger = Logger(__name__)
 middleware.register(app)
-app.include_router(line_level_bug.router, prefix=settings.PREFIX)
+app.include_router(line_level_bug.router, prefix=settings_access_contro.PREFIX)
 
 
 # Additional yaml version of openapi.json
