@@ -6,10 +6,6 @@ from urllib.request import BaseHandler
 from logbook import Logger
 from pydantic import Field, validator, BaseModel
 
-<<<<<<< HEAD
-=======
-from ..config import settings_access_contro
->>>>>>> 0eb5c972 (commit)
 
 logger = Logger(__name__)
 
