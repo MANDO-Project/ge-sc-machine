@@ -5,7 +5,6 @@ from typing import Optional, List
 from logbook import Logger
 from pydantic import Field, validator, BaseModel
 
-from ..config import settings
 
 logger = Logger(__name__)
 
