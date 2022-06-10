@@ -11,6 +11,11 @@ from .common.utils import check_gpu
 
 BASE_PATH = os.path.dirname(__file__)
 
+class LINE_NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS(BaseSettings):
+    CHECKPOINT = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/han_fold_0.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/buggy_curated/cfg_cg_compressed_graphs.gpickle')
+    DATASET = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/buggy_curated')
+    feature_extractor = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/matrix_line_dim128_of_core_graph_of_reentrancy_cfg_cg_buggy_curated.pkl')
 
 class NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL(BaseSettings):
     CHECKPOINT = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/han_fold_0.pth')
@@ -75,7 +80,6 @@ class Settings_ACCESS_CONTROL(BaseSettings):
     class Config:
         env_file = '.env'
 
-
 class Settings_ARITHMETIC(BaseSettings):
     SERVER_NAME = 'sco'
     VERSION: str = 'v1.0.0'
@@ -89,7 +93,6 @@ class Settings_ARITHMETIC(BaseSettings):
     DEVICE: str = 'cuda:0' if check_gpu() else 'cpu'
     class Config:
         env_file = '.env'
-
 
 class Settings_DENIAL_OF_SERVICE(BaseSettings):
     SERVER_NAME = 'sco'
@@ -120,7 +123,6 @@ class Settings_FRONT_RUNNING(BaseSettings):
     class Config:
         env_file = '.env'
 
-
 class Settings_REENTRANCY(BaseSettings):
     SERVER_NAME = 'sco'
     VERSION: str = 'v1.0.0'
@@ -149,7 +151,6 @@ class Settings_TIME_MANIPULATION(BaseSettings):
     DEVICE: str = 'cuda:0' if check_gpu() else 'cpu'
     class Config:
         env_file = '.env'
-
 
 class Settings_UNCHECKED_LOW_LEVEL_CALLS(BaseSettings):
     SERVER_NAME = 'sco'
