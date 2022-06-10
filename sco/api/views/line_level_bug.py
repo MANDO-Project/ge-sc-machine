@@ -1,3 +1,5 @@
+from dataclasses import field
+from unittest import result
 from logbook import Logger
 from fastapi import APIRouter, Security
 
@@ -8,7 +10,7 @@ from ...auth import get_api_key
 from ...config import settings_access_control,settings_arithmetic,settings_denial_of_service,settings_front_running,settings_reentrancy,settings_time_manipulation,settings_unchecked_low_level_calls
 from ...common.utils import check_gpu
 from ...common.utils import init_line_node_classificator
-from ...common.utils import get_node_ids, get_binary_mask, get_line_numbers
+from ...common.utils import get_node_ids, get_binary_mask, get_line_numbers, get_edges,get_color_node,get_node_type
 from ...schemas.api import NodeRequest, NodeResponse 
 
 
@@ -52,6 +54,18 @@ node_classifier_reentrancy = init_line_node_classificator(settings_reentrancy.LI
 #                                           settings_unchecked_low_level_calls.DEVICE)
 
 
+node_classifier_time_manipulation, smart_contracts = init_line_node_classificator(settings_time_manipulation.LINE.CHECKPOINT,
+                                          settings_time_manipulation.LINE.COMPRESSED_GRAPH,
+                                          settings_time_manipulation.LINE.DATASET,
+                                          settings_time_manipulation.LINE.feature_extractor,
+                                          settings_time_manipulation.DEVICE)
+
+node_classifier_unchecked_low_level_calls, smart_contracts = init_line_node_classificator(settings_unchecked_low_level_calls.LINE.CHECKPOINT,
+                                          settings_unchecked_low_level_calls.LINE.COMPRESSED_GRAPH,
+                                          settings_unchecked_low_level_calls.LINE.DATASET,
+                                          settings_unchecked_low_level_calls.LINE.feature_extractor,
+                                          settings_unchecked_low_level_calls.DEVICE)     
+print("backend true")                                     
 @router.post('/check_device', dependencies=[Security(get_api_key)])
 async def check_device():
     if is_gpu:
@@ -62,7 +76,7 @@ async def check_device():
     return {'device': device_name}
 
 
-@router.post('/line', response_model=NodeResponse, dependencies=[Security(get_api_key)])
+@router.post('/line/unchecked_low_level_calls', response_model=NodeResponse, dependencies=[Security(get_api_key)])
 async def detect_line_level_bugs(item: NodeRequest):
     node_classifier_unchecked_low_level_calls.eval()
     file_ids = get_node_ids(node_classifier_unchecked_low_level_calls.nx_graph, [item.filename])
@@ -70,14 +84,24 @@ async def detect_line_level_bugs(item: NodeRequest):
     file_edges=get_edges(node_classifier_unchecked_low_level_calls.nx_graph, [item.filename],file_ids)
     color_nodes=get_color_node(node_classifier_unchecked_low_level_calls.nx_graph, [item.filename])
     with torch.no_grad():
-        logits = node_classifier()
-        logits = logits.to(settings.DEVICE)
-        file_mask = get_binary_mask(node_classifier.total_nodes, file_ids)
+        logits = node_classifier_unchecked_low_level_calls()
+        logits = logits.to(settings_unchecked_low_level_calls.DEVICE)
+        file_mask = get_binary_mask(node_classifier_unchecked_low_level_calls.total_nodes, file_ids)
         preds = logits[file_mask]
         _, indices = torch.max(preds, dim=1)
         preds = indices.long().cpu().tolist()
         assert len(preds) == len(line_numbers)
-        results = [{'node_id': i, 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
+        links=[{"source": "%s"%str(file_edges[i][0]), "target": "%s"%str(file_edges[i][1])} for i in range(len(file_edges))]
+        results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
+        nodes=[]
+        for i in range(len(line_numbers)):
+            string=''
+            for item in line_numbers[i]:
+                string=string+"%s"%str(item)+' '
+            string="id:%s,"%str(i)+ "node type: %s,"%str(node_type[i])+"\ncode lines: "+ string +"."
+            node={'id':"%s"%str(i) ,'name':string,'error':preds[i],'color':color_nodes[i],'code_lines': line_numbers[i]}
+            nodes.append(node)
+        graph={"nodes":nodes,"links":links}
     return {'message': 'Loaded model successfully',
             'results': results,
             'graph':graph}
@@ -177,7 +201,6 @@ async def detect_line_level_bugs(item: NodeRequest):
     return {'message': 'Loaded model successfully',
             'results': results,
             'graph':graph}
-
 
 @router.post('/line/front_running', response_model=NodeResponse, dependencies=[Security(get_api_key)])
 async def detect_line_level_bugs(item: NodeRequest):
