@@ -53,19 +53,6 @@ node_classifier_reentrancy = init_line_node_classificator(settings_reentrancy.LI
 #                                           settings_unchecked_low_level_calls.LINE.feature_extractor,
 #                                           settings_unchecked_low_level_calls.DEVICE)
 
-
-node_classifier_time_manipulation, smart_contracts = init_line_node_classificator(settings_time_manipulation.LINE.CHECKPOINT,
-                                          settings_time_manipulation.LINE.COMPRESSED_GRAPH,
-                                          settings_time_manipulation.LINE.DATASET,
-                                          settings_time_manipulation.LINE.feature_extractor,
-                                          settings_time_manipulation.DEVICE)
-
-node_classifier_unchecked_low_level_calls, smart_contracts = init_line_node_classificator(settings_unchecked_low_level_calls.LINE.CHECKPOINT,
-                                          settings_unchecked_low_level_calls.LINE.COMPRESSED_GRAPH,
-                                          settings_unchecked_low_level_calls.LINE.DATASET,
-                                          settings_unchecked_low_level_calls.LINE.feature_extractor,
-                                          settings_unchecked_low_level_calls.DEVICE)     
-print("backend true")                                     
 @router.post('/check_device', dependencies=[Security(get_api_key)])
 async def check_device():
     if is_gpu:
