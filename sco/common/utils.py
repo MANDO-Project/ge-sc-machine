@@ -22,7 +22,6 @@ def init_line_node_classificator(ckpt, compressed_graph, feature_extractor, devi
     return model
 
 
-
 def get_binary_mask(total_size, indices):
     mask = torch.zeros(total_size)
     mask[indices] = 1
@@ -47,6 +46,7 @@ def get_line_numbers(graph, source_files):
             line_numbers.append(line_number)
     return line_numbers
 
+
 def get_edges(graph,source_files,file_ids):
     file_edges=[]
     if len(file_ids)>0:
@@ -58,6 +58,7 @@ def get_edges(graph,source_files,file_ids):
             node_v=node_v-first_node
             file_edges.append([node_u,node_v])
     return file_edges
+
 
 def get_color_node(graph,source_files):
     color_node=[]
@@ -99,9 +100,9 @@ def get_color_node(graph,source_files):
             elif type==nodeTypes[14]:
                 color_node.append('#150517')
             else: 
-                color_node.append('#000000')
-                
+                color_node.append('#000000')       
     return color_node
+
 
 def get_node_type(graph, source_files):
     file_node_type = []

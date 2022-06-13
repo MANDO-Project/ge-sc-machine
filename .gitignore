@@ -6,6 +6,7 @@ package-lock.json
 *.pth
 *.zip
 .DS_Store
+_static
 
 .ipynb_checkpoints
 outputs/*
