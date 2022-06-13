@@ -1,0 +1,106 @@
+# absl-py==1.0.0
+# alabaster==0.7.12
+# anyio==3.6.1
+# asgiref==3.5.2
+# autopep8==1.6.0
+# Babel==2.9.1
+# cachetools==5.1.0
+# certifi==2021.10.8
+# charset-normalizer==2.0.12
+click==8.1.2
+click-help-colors==0.9.1
+crytic-compile==0.2.0
+# cycler==0.11.0
+# dgl==0.9
+dgl==0.8.0.post1
+dglgo==0.0.1
+docutils==0.17.1
+fastapi==0.78.0
+fastapi-rfc7807==0.5.0
+# fonttools==4.32.0
+# google-auth==2.6.6
+# google-auth-oauthlib==0.4.6
+graphviz==0.20
+grpcio==1.46.1
+h11==0.13.0
+httptools==0.4.0
+# idna==3.3
+# imagesize==1.3.0
+# importlib-metadata==4.11.3
+# isort==5.10.1
+# Jinja2==3.0.3
+# joblib==1.1.0
+# kiwisolver==1.4.2
+Logbook==1.5.3
+# Markdown==3.3.7
+# MarkupSafe==2.1.1
+# matplotlib==3.5.1
+networkx==2.8
+numpy==1.22.3
+numpydoc==1.2.1
+oauthlib==3.2.0
+# packaging==21.3
+# pandas==1.4.2
+# pathlib2==2.3.7.post1
+# Pillow==9.1.0
+# prettytable==3.2.0
+# protobuf==3.20.1
+# psutil==5.9.0
+# py-solc==3.2.0
+# pyasn1==0.4.8
+# pyasn1-modules==0.2.8
+# pycodestyle==2.8.0
+pydantic==1.9.0
+pydot==1.4.2
+# Pygments==2.11.2
+# pygraphviz==1.9
+# pyparsing==3.0.8
+# pysha3==1.0.2
+# python-dateutil==2.8.2
+# python-dotenv==0.20.0
+# pytz==2022.1
+# PyYAML==6.0
+# requests==2.27.1
+# requests-oauthlib==1.3.1
+# rsa==4.8
+# ruamel.yaml==0.17.21
+# ruamel.yaml.clib==0.2.6
+scikit-learn==1.0.2
+scipy==1.8.0
+# semantic-version==2.10.0
+six==1.16.0
+sklearn==0.0
+slither-analyzer==0.8.0
+# sniffio==1.2.0
+# snowballstemmer==2.2.0
+# solc-select==0.2.1
+# Sphinx==4.5.0
+# sphinxcontrib-applehelp==1.0.2
+# sphinxcontrib-devhelp==1.0.2
+# sphinxcontrib-htmlhelp==2.0.0
+# sphinxcontrib-jsmath==1.0.1
+# sphinxcontrib-qthelp==1.0.3
+# sphinxcontrib-serializinghtml==1.1.5
+starlette==0.19.1
+# tabulate==0.8.9
+threadpoolctl==3.1.0
+# timebudget==0.7.1
+# toml==0.10.2
+# torch==1.13.0.dev20220521
+# torch-cluster==1.6.0
+# torch-geometric==2.0.4
+# torch-scatter==2.0.9
+# torch-sparse==0.6.13
+# torch-spline-conv==1.2.1
+# torchaudio==0.11.0
+# torchvision==0.12.0
+typer==0.4.1
+typing_extensions==4.1.1
+urllib3==1.26.9
+uvicorn==0.17.6
+# uvloop==0.16.0
+# watchgod==0.8.2
+# wcwidth==0.2.5
+websockets==10.3
+# Werkzeug==2.1.2
+# zipp==3.8.0
