@@ -46,7 +46,7 @@ class NODE_CLASSIFIER_CONFIG_FRONT_RUNNING(BaseSettings):
 
 
 class NODE_CLASSIFIER_CONFIG_REENTRANCY(BaseSettings):
-    CHECKPOINT = join(BASE_PATH, '/Users/minh/Documents/2022/smart_contract/mando/ge-sc/models/node_classification/hgt/cfg_cg/nodetype/reentrancy/han_fold_0.pth')
+    CHECKPOINT = join(BASE_PATH, './models/node_detection/nodetype/reentrancy_hgt.pth')
     COMPRESSED_GRAPH = join(BASE_PATH, '/Users/minh/Documents/2022/smart_contract/mando/ge-sc/experiments/ge-sc-data/source_code/reentrancy/buggy_curated/cfg_cg_compressed_graphs.gpickle')
     DATASET = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/buggy_curated')
     feature_extractor = join(BASE_PATH, '../models/node_classification/cfg_cg/line/reentrancy/matrix_line_dim128_of_core_graph_of_reentrancy_cfg_cg_buggy_curated.pkl')
