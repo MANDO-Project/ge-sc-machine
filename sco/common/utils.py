@@ -5,8 +5,7 @@ import torch
 import numpy as np
 from logbook import Logger
 
-sys.path.append("/Users/minh/Documents/2022/smart_contract/mando/ge-sc/") 
-from sco_models.model_hgt import HGTVulNodeClassifier
+from ..sco_models.model_hgt import HGTVulNodeClassifier
 
 logger = Logger(__name__)
 

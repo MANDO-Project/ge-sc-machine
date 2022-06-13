@@ -302,7 +302,7 @@ async def extra_detect_reentrancy_line_level_bugs(data: NodeDetectRequest,
         logits, _ = node_classifier.extend_forward(extra_graph)
         file_mask = get_binary_mask(len(extra_graph), file_ids)
         preds = logits[file_mask]
-        preds = nn.functional.softmax(preds)
+        preds = nn.functional.softmax(preds, dim=1)
         _, indices = torch.max(preds, dim=1)
         preds = indices.long().cpu().tolist()
         assert len(preds) == len(line_numbers)
