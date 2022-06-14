@@ -16,11 +16,10 @@ from ...config import NODE_CLASSIFIER_CONFIG_FRONT_RUNNING
 from ...config import NODE_CLASSIFIER_CONFIG_REENTRANCY
 from ...config import NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION
 from ...config import NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS
-from ...schemas.api import NodeRequest, NodeResponse 
-from ...schemas.api import NodeDetectRequest, NodeDetectReponse, MultiBuggyNodeDetectReponse
+from ...schemas.api import NodeRequest, ContractRequest, NodeDetectReponse, MultiBuggyNodeDetectReponse, NodeResponse
 from ...consts import BugType, NodeFeature
 from ...common.utils import check_gpu
-from ...common.utils import init_line_node_classificator
+from ...common.utils import init_node_classificator
 from ...common.utils import get_node_ids, get_binary_mask, \
                             get_line_numbers, get_edges, \
                             get_color_node, get_node_type, \
@@ -38,25 +37,27 @@ router = APIRouter()
 CATEGORIES_OF_HEATMAP = 20
 
 is_gpu = check_gpu()
-node_classifier_access_control = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL.CHECKPOINT,
+
+# Init Node classifier models
+node_classifier_access_control = init_node_classificator(NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL.CHECKPOINT,
                                                               NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL.COMPRESSED_GRAPH,
                                                               settings.DEVICE)
-node_classifier_arithmetic = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_ARITHMETIC.CHECKPOINT,
+node_classifier_arithmetic = init_node_classificator(NODE_CLASSIFIER_CONFIG_ARITHMETIC.CHECKPOINT,
                                                           NODE_CLASSIFIER_CONFIG_ARITHMETIC.COMPRESSED_GRAPH,
                                                           settings.DEVICE)
-node_classifier_denial_of_service = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_DENIAL_OF_SERVICE.CHECKPOINT,
+node_classifier_denial_of_service = init_node_classificator(NODE_CLASSIFIER_CONFIG_DENIAL_OF_SERVICE.CHECKPOINT,
                                                                  NODE_CLASSIFIER_CONFIG_DENIAL_OF_SERVICE.COMPRESSED_GRAPH,
                                                                  settings.DEVICE)   
-node_classifier_front_running = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_FRONT_RUNNING.CHECKPOINT,
+node_classifier_front_running = init_node_classificator(NODE_CLASSIFIER_CONFIG_FRONT_RUNNING.CHECKPOINT,
                                                              NODE_CLASSIFIER_CONFIG_FRONT_RUNNING.COMPRESSED_GRAPH,
                                                              settings.DEVICE)                                     
-node_classifier_reentrancy = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_REENTRANCY.CHECKPOINT,
+node_classifier_reentrancy = init_node_classificator(NODE_CLASSIFIER_CONFIG_REENTRANCY.CHECKPOINT,
                                                           NODE_CLASSIFIER_CONFIG_REENTRANCY.COMPRESSED_GRAPH,
                                                           settings.DEVICE)
-node_classifier_time_manipulation = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION.CHECKPOINT,
+node_classifier_time_manipulation = init_node_classificator(NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION.CHECKPOINT,
                                                                  NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION.COMPRESSED_GRAPH,
                                                                  settings.DEVICE)
-node_classifier_unchecked_low_level_calls = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS.CHECKPOINT,
+node_classifier_unchecked_low_level_calls = init_node_classificator(NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS.CHECKPOINT,
                                                                          NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS.COMPRESSED_GRAPH,
                                                                          settings.DEVICE)
 
@@ -112,7 +113,7 @@ async def detect_reentrancy_line_level_bugs(item: NodeRequest):
 
 
 @router.post('/node/{bug_type}/{node_feature}', response_model=NodeDetectReponse, dependencies=[Security(get_api_key)])
-async def extra_detect_reentrancy_line_level_bugs(data: NodeDetectRequest,
+async def extra_detect_reentrancy_line_level_bugs(data: ContractRequest,
                                                   bug_type: BugType = BugType.REENTRANCY,
                                                   node_feature: NodeFeature = NodeFeature.NODE_TYPE):
     # Get models
@@ -164,7 +165,7 @@ async def extra_detect_reentrancy_line_level_bugs(data: NodeDetectRequest,
 
 
 @router.post('/node/{node_feature}', response_model=MultiBuggyNodeDetectReponse, dependencies=[Security(get_api_key)])
-async def extra_detect_line_level_bugs(data: NodeDetectRequest,
+async def extra_detect_line_level_bugs(data: ContractRequest,
                                        node_feature: NodeFeature = NodeFeature.NODE_TYPE):
     # Generate graph for comming contract
     sm_content = data.smart_contract.decode("utf-8")
@@ -180,11 +181,9 @@ async def extra_detect_line_level_bugs(data: NodeDetectRequest,
     if cfg_graph is None:
         return {'message': 'Found a illegal solidity smart contract'}
     cfg_cg_graph = combine_cfg_cg(cfg_graph, cg_graph)
-    total_reports = {}
-    total_reports = {'smart_contract_length': sm_length}
-    total_reports['heatmap_categories'] = CATEGORIES_OF_HEATMAP
+    total_reports = []
     for bug, model in MODEL_OPTS.items():
-        report = {}
+        report = {'type': bug}
         original_graph = model.nx_graph
         extra_graph = nx.disjoint_union(original_graph, cfg_cg_graph)
         file_ids = get_node_ids(extra_graph, [sm_name])
@@ -208,7 +207,6 @@ async def extra_detect_line_level_bugs(data: NodeDetectRequest,
             # Generate heatmap data series
             bug_density = []
             max_line = sm_length if len(bug_lines) == 0 else max(bug_lines)
-            print(bug_lines)
             bug_population = torch.zeros(max_line + 1)  # Cuz the begin of code lines is 1
             bug_population[bug_lines] = 1
             bug_population = bug_population[1:sm_length]
@@ -218,6 +216,9 @@ async def extra_detect_line_level_bugs(data: NodeDetectRequest,
             report['bug_density'] = bug_density
             # results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
             # report['results'] = results
-        total_reports[bug] = report
+        total_reports.append(report)
     logger.debug(total_reports)
-    return {'summaries': total_reports}
+    response = {'summaries': total_reports,
+                'smart_contract_length': sm_length,
+                'heatmap_categories': CATEGORIES_OF_HEATMAP}
+    return response

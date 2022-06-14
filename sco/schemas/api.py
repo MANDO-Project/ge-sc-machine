@@ -18,7 +18,7 @@ class NodeRequest(BaseModel):
     filename: str = Field(description='The file name of smart contracts included dataset')
 
 
-class NodeDetectRequest(BaseModel):
+class ContractRequest(BaseModel):
     smart_contract: bytes = Field(description='The file content in base64 encoded format.')
 
     @validator('smart_contract')
@@ -39,11 +39,15 @@ class NodeDetectReponse(BaseModel):
 
 class MultiBuggyNodeDetectReponse(BaseModel):
     id: UUID = uuid4()
-    summaries: Dict
+    summaries: List
+    smart_contract_length: int
+    heatmap_categories: int
 
 
-class GraphDetectRequest(BaseModel):
-    pass
+class MultiBuggyGraphDetectReponse(BaseModel):
+    id: UUID = uuid4()
+    summaries: List
+    smart_contract_length: int
 
 
 class Graph(BaseModel):

@@ -10,6 +10,7 @@ from .common.utils import check_gpu
 BASE_PATH = os.path.dirname(__file__)
 
 
+# Node config ============================================
 class NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL(str, Enum):
     CHECKPOINT = join(BASE_PATH, './models/node_detection/nodetype/access_control_hgt.pth')
     COMPRESSED_GRAPH = join(BASE_PATH, './graphs/node_detection/access_control_cfg_cg_compressed_graphs.gpickle')
@@ -41,6 +42,42 @@ class NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION(str, Enum):
 class NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS(str, Enum):
     CHECKPOINT = join(BASE_PATH, './models/node_detection/nodetype/reentrancy_hgt.pth')
     COMPRESSED_GRAPH = join(BASE_PATH, './graphs/node_detection/reentrancy_cfg_cg_compressed_graphs.gpickle')
+#==========================================================
+
+
+# Graph config ============================================
+class GRAPH_CLASSIFIER_CONFIG_ACCESS_CONTROL(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/access_control_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/access_control_cfg_cg_compressed_graphs.gpickle')
+
+
+class GRAPH_CLASSIFIER_CONFIG_ARITHMETIC(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/arithmetic_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/arithmetic_cfg_cg_compressed_graphs.gpickle')
+
+class GRAPH_CLASSIFIER_CONFIG_DENIAL_OF_SERVICE(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/denial_of_service_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/denial_of_service_cfg_cg_compressed_graphs.gpickle')
+
+class GRAPH_CLASSIFIER_CONFIG_FRONT_RUNNING(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/front_running_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/front_running_cfg_cg_compressed_graphs.gpickle')
+
+
+class GRAPH_CLASSIFIER_CONFIG_REENTRANCY(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/reentrancy_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/reentrancy_cfg_cg_compressed_graphs.gpickle')
+
+
+class GRAPH_CLASSIFIER_CONFIG_TIME_MANIPULATION(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/time_manipulation_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/time_manipulation_cfg_cg_compressed_graphs.gpickle')
+
+
+class GRAPH_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS(str, Enum):
+    CHECKPOINT = join(BASE_PATH, './models/graph_detection/nodetype/unchecked_low_level_calls_hgt.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/graph_detection/unchecked_low_level_calls_cfg_cg_compressed_graphs.gpickle')
+#==========================================================
 
 
 class Settings(BaseSettings):

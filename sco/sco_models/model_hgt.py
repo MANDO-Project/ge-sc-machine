@@ -152,7 +152,7 @@ class HGT(nn.Module):
 
 
 class HGTVulNodeClassifier(nn.Module):
-    def __init__(self, compressed_global_graph_path, feature_extractor=None, node_feature='han', hidden_size=128, num_layers=2,num_heads=8, use_norm=True, device='cpu'):
+    def __init__(self, compressed_global_graph_path, feature_extractor=None, node_feature='nodetype', hidden_size=128, num_layers=2,num_heads=8, use_norm=True, device='cpu'):
         super(HGTVulNodeClassifier, self).__init__()
         self.compressed_global_graph_path = compressed_global_graph_path
         self.hidden_size = hidden_size
@@ -304,7 +304,7 @@ class HGTVulNodeClassifier(nn.Module):
 
 
 class HGTVulGraphClassifier(nn.Module):
-    def __init__(self, compressed_global_graph_path, feature_extractor=None, node_feature='han', hidden_size=128, num_layers=2,num_heads=8, use_norm=True, device='cpu'):
+    def __init__(self, compressed_global_graph_path, feature_extractor=None, node_feature='nodetype', hidden_size=128, num_layers=2,num_heads=8, use_norm=True, device='cpu'):
         super(HGTVulGraphClassifier, self).__init__()
         self.compressed_global_graph_path = compressed_global_graph_path
         self.hidden_size = hidden_size
@@ -421,6 +421,46 @@ class HGTVulGraphClassifier(nn.Module):
         for layer in self.classify.children():
             if hasattr(layer, 'reset_parameters'):
                     layer.reset_parameters()
+
+    def extend_forward(self, new_graph, new_contracts):
+        nx_graph = new_graph
+        nx_graph = nx.convert_node_labels_to_integers(nx_graph)
+        nx_graph = add_hetero_ids(nx_graph)
+        nx_g_data = generate_hetero_graph_data(nx_graph)
+        # Get node ids
+        node_ids_dict = get_node_ids_dict(nx_graph)
+        node_ids_by_filename = get_node_ids_by_filename(nx_graph)
+        # Reflect graph data
+        symmetrical_global_graph_data = reflect_graph(nx_g_data)
+        number_of_nodes = get_number_of_nodes(nx_graph)
+        symmetrical_global_graph = dgl.heterograph(symmetrical_global_graph_data, num_nodes_dict=number_of_nodes, device=self.device)
+        # Create input node features
+        features = {}
+        if self.node_feature == 'nodetype':
+            for ntype in self.symmetrical_global_graph.ntypes:
+                features[ntype] = self._nodetype2onehot(ntype).repeat(symmetrical_global_graph.num_nodes(ntype), 1).to(self.device)
+            self.in_size = len(self.node_types)
+        for ntype in self.symmetrical_global_graph.ntypes:
+            emb = nn.Parameter(features[ntype], requires_grad = False)
+            symmetrical_global_graph.nodes[ntype].data['inp'] = emb.to(self.device)
+
+        h = {}
+        hiddens = torch.zeros((symmetrical_global_graph.number_of_nodes(), self.hidden_size), device=self.device)
+        for ntype in self.symmetrical_global_graph.ntypes:
+            n_id = self.ntypes_dict[ntype]
+            h[ntype] = F.gelu(self.adapt_ws[n_id](symmetrical_global_graph.nodes[ntype].data['inp']))
+        for i in range(self.num_layers):
+            h = self.gcs[i](symmetrical_global_graph, h)
+        for ntype, feature in h.items():
+            assert len(node_ids_dict[ntype]) == feature.shape[0]
+            hiddens[node_ids_dict[ntype]] = feature
+        batched_graph_embedded = []
+        for g_name in new_contracts:
+            node_list = node_ids_by_filename[g_name]
+            batched_graph_embedded.append(hiddens[node_list].mean(0).tolist())
+        batched_graph_embedded = torch.tensor(batched_graph_embedded).to(self.device)
+        output = self.classify(batched_graph_embedded)
+        return output
 
     def forward(self, batched_g_name, save_featrues=None):
         h = {}
