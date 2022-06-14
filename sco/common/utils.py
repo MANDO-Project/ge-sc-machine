@@ -14,8 +14,8 @@ def check_gpu():
     return torch.cuda.is_available()
 
 
-def init_line_node_classificator(ckpt, compressed_graph, feature_extractor, device):
-    model = HGTVulNodeClassifier(compressed_graph, feature_extractor, node_feature='nodetype', device=device)
+def init_line_node_classificator(ckpt, compressed_graph, device):
+    model = HGTVulNodeClassifier(compressed_graph, node_feature='nodetype', device=device)
     model.load_state_dict(torch.load(ckpt))
     model.to(device)
     return model

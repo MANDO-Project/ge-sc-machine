@@ -1,5 +1,6 @@
 import base64
 import binascii
+from dis import disco
 from typing import Any, List, Dict, Optional
 
 from uuid import UUID, uuid4
@@ -34,6 +35,11 @@ class NodeDetectReponse(BaseModel):
     message: str
     results: Optional[List]
     graph: Optional[Dict]
+
+
+class MultiBuggyNodeDetectReponse(BaseModel):
+    id: UUID = uuid4()
+    summaries: Dict
 
 
 class GraphDetectRequest(BaseModel):
