@@ -1,13 +1,10 @@
-import sys
-import os
-
 import torch
-import numpy as np
 from logbook import Logger
 
 from ..sco_models.model_hgt import HGTVulNodeClassifier
 
 logger = Logger(__name__)
+torch.manual_seed(1)
 
 
 def check_gpu():
@@ -57,6 +54,14 @@ def get_edges(graph,source_files,file_ids):
             node_v=node_v-first_node
             file_edges.append([node_u,node_v])
     return file_edges
+
+
+def get_bug_lines(preds, lines):
+    bug_lines = []
+    for i in range(len(preds)):
+        if preds[i]:
+            bug_lines += lines[i]
+    return list(set(bug_lines))
 
 
 def get_color_node(graph,source_files):

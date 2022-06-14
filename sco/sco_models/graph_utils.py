@@ -3,6 +3,9 @@ import dgl
 import networkx as nx
 
 
+torch.manual_seed(1)
+
+
 def add_hetero_ids(nx_graph):
     nx_g = nx_graph
     dict_hetero_id = {}

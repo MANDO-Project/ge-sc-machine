@@ -20,6 +20,9 @@ from .graph_utils import add_hetero_ids, \
                          generate_random_node_features, generate_zeros_node_features
 
 
+torch.manual_seed(1)
+
+
 class HGTLayer(nn.Module):
     def __init__(self,
                  in_dim,

@@ -2,7 +2,6 @@ from os.path import join
 from time import time
 
 import networkx as nx
-from tensorboard import summary
 import torch
 from torch import nn
 from logbook import Logger
@@ -22,14 +21,21 @@ from ...schemas.api import NodeDetectRequest, NodeDetectReponse, MultiBuggyNodeD
 from ...consts import BugType, NodeFeature
 from ...common.utils import check_gpu
 from ...common.utils import init_line_node_classificator
-from ...common.utils import get_node_ids, get_binary_mask, get_line_numbers, get_edges,get_color_node,get_node_type
+from ...common.utils import get_node_ids, get_binary_mask, \
+                            get_line_numbers, get_edges, \
+                            get_color_node, get_node_type, \
+                            get_bug_lines
 from ...common.process_graphs.call_graph_generator import generate_cg
 from ...common.process_graphs.control_flow_graph_generator import generate_cfg
 from ...common.process_graphs.combination_call_graph_and_control_flow_graph_helper import combine_cfg_cg
 
 
+torch.manual_seed(1)
 logger = Logger(__name__)
 router = APIRouter()
+
+
+CATEGORIES_OF_HEATMAP = 20
 
 is_gpu = check_gpu()
 node_classifier_access_control = init_line_node_classificator(NODE_CLASSIFIER_CONFIG_ACCESS_CONTROL.CHECKPOINT,
@@ -111,7 +117,6 @@ async def extra_detect_reentrancy_line_level_bugs(data: NodeDetectRequest,
                                                   node_feature: NodeFeature = NodeFeature.NODE_TYPE):
     # Get models
     node_classifier = MODEL_OPTS[bug_type]
-
     # Generate graph for comming contract
     sm_content = data.smart_contract.decode("utf-8")
     sm_name = 'contract_0.sol'
@@ -119,6 +124,11 @@ async def extra_detect_reentrancy_line_level_bugs(data: NodeDetectRequest,
     with open(sm_path, 'w') as f:
         f.write(sm_content)
     cfg_graph = generate_cfg(sm_path)
+    if cfg_graph is None:
+        return {'message': 'Found a illegal solidity smart contract'}
+    cg_graph = generate_cg(sm_path)
+    if cfg_graph is None:
+        return {'message': 'Found a illegal solidity smart contract'}
     cg_graph = generate_cg(sm_path)
     cfg_cg_graph = combine_cfg_cg(cfg_graph, cg_graph)
     original_graph = node_classifier.nx_graph
@@ -158,14 +168,21 @@ async def extra_detect_line_level_bugs(data: NodeDetectRequest,
                                        node_feature: NodeFeature = NodeFeature.NODE_TYPE):
     # Generate graph for comming contract
     sm_content = data.smart_contract.decode("utf-8")
+    sm_length = len(sm_content.split('\n'))
     sm_name = 'contract_0.sol'
     sm_path = join('./sco/_static', sm_name)
     with open(sm_path, 'w') as f:
         f.write(sm_content)
     cfg_graph = generate_cfg(sm_path)
+    if cfg_graph is None:
+        return {'message': 'Found a illegal solidity smart contract'}
     cg_graph = generate_cg(sm_path)
+    if cfg_graph is None:
+        return {'message': 'Found a illegal solidity smart contract'}
     cfg_cg_graph = combine_cfg_cg(cfg_graph, cg_graph)
-    reports = {}
+    total_reports = {}
+    total_reports = {'smart_contract_length': sm_length}
+    total_reports['heatmap_categories'] = CATEGORIES_OF_HEATMAP
     for bug, model in MODEL_OPTS.items():
         report = {}
         original_graph = model.nx_graph
@@ -182,11 +199,25 @@ async def extra_detect_line_level_bugs(data: NodeDetectRequest,
             _, indices = torch.max(preds, dim=1)
             preds = indices.long().cpu().tolist()
             report['runtime'] = int((time() - begin_time) * 1000)
-            report['number_of_buggy'] = preds.count(1)
-            report['number_of_normal'] = preds.count(0)
+            report['number_of_bug_node'] = preds.count(1)
+            report['number_of_normal_node'] = preds.count(0)
             assert len(preds) == len(line_numbers)
-            results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
+            bug_lines = get_bug_lines(preds, line_numbers)
+            # Considering checking over here
+            # assert len(bug_lines) == 0 or max(bug_lines) <= sm_length
+            # Generate heatmap data series
+            bug_density = []
+            max_line = sm_length if len(bug_lines) == 0 else max(bug_lines)
+            print(bug_lines)
+            bug_population = torch.zeros(max_line + 1)  # Cuz the begin of code lines is 1
+            bug_population[bug_lines] = 1
+            bug_population = bug_population[1:sm_length]
+            line_per_category = sm_length/CATEGORIES_OF_HEATMAP
+            for i in range(CATEGORIES_OF_HEATMAP):
+                bug_density.append(bug_population[int(i * line_per_category) : int((i+1) * line_per_category)].tolist().count(1))
+            report['bug_density'] = bug_density
+            # results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
             # report['results'] = results
-        reports[bug] = report
-    logger.debug(reports)
-    return {'summaries': reports}
+        total_reports[bug] = report
+    logger.debug(total_reports)
+    return {'summaries': total_reports}
