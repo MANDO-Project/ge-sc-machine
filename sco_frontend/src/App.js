@@ -91,11 +91,13 @@ class App extends Component {
     onSubmit = () => {
       //connect graph backend
       console.log(JSON.stringify({smart_contract:this.state.base64String}));
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/graph/test'
+      let link='http://localhost:5555/v1.0.0/vulnerability/detection/graph/nodetype'
       console.log(link)
       const requestOptions = {
         method: 'POST',
-        headers: { 'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'}
+        headers: { 'Content-Type': 'application/json',
+                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
+        body: JSON.stringify({smart_contract:this.state.base64String})
       };
       fetch(link, requestOptions)
       .then(response => response.json())
