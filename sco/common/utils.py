@@ -20,10 +20,9 @@ def init_node_classificator(ckpt, compressed_graph, device):
 
 
 def init_graph_classificator(ckpt, compressed_graph, device):
-    model = HGTVulGraphClassifier('/Users/minh/Documents/2022/smart_contract/mando/ge-sc-machine/sco/graphs/graph_detection/reentrancy_cfg_cg_compressed_graphs.gpickle', node_feature='nodetype', device=device)
-    model.load_state_dict(torch.load('/Users/minh/Documents/2022/smart_contract/mando/ge-sc-machine/sco/models/graph_detection/nodetype/reentrancy_hgt.pth'))
+    model = HGTVulGraphClassifier(compressed_graph, node_feature='nodetype', device=device)
+    model.load_state_dict(torch.load(ckpt))
     model.to(device)
-    print('Loaded successfully')
     return model
 
 

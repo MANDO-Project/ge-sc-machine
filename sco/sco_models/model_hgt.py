@@ -310,6 +310,7 @@ class HGTVulGraphClassifier(nn.Module):
         self.hidden_size = hidden_size
         self.num_heads = num_heads
         self.device = device
+        self.node_feature = node_feature
 
         # Get Global graph
         nx_graph = load_hetero_nx_graph(compressed_global_graph_path)

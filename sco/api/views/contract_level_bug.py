@@ -94,7 +94,7 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
         # Inference
         begin_time = time()
         with torch.no_grad():
-            logits = model.extend_forward(extra_graph, [sm_path])
+            logits = model.extend_forward(extra_graph, [sm_name])
             preds = nn.functional.softmax(logits, dim=1)
             _, indices = torch.max(preds, dim=1)
             preds = indices.long().cpu().tolist()
