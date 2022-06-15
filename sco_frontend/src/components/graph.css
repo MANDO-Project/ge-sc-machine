@@ -133,31 +133,5 @@
     border: 1px solid #ccc;
     border-radius: 3px;
 }
-#red{
-    display:inline-block;
-    width: 15px;
-    height: 15px;
-    text-align: center;
-    background-color:red;
-    border: 1px solid black;
-    border-radius: 30px;
-}
-#white{
-    display:inline-block;
-    width: 15px;
-    height: 15px;
-    text-align: center;
-    background-color:white;
-    border: 1px solid black;
-    border-radius: 30px;
-}
-.line_note{
-    grid-template-columns: 50%,50%;
-}
-.note{
-    display:inline-block;
-    width: 50%;
-    text-align: center;
-}
 
 

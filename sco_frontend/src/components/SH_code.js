@@ -1,42 +1,21 @@
 import React,{Component} from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {coy} from 'react-syntax-highlighter/dist/esm/styles/prism';
-export default class SyntaxHighlighter_code extends Component{
+import Graph from './Graph';
+export default class  Detail_error extends Component{
   constructor(props){
     super(props);
-    this.state = { 
-      // Initially, no file is selected 
-      
-      arrayerrorline:[],
-    }; 
-
   }
-
-  componentDidUpdate(prevProps,prevState){
-    if((prevProps.detectResults!==this.props.detectResults)||prevProps.ClickNode!==this.props.ClickNode){
-      
-      let array = []
-      let ArrayUniq = []
-      let self=this
-
-      var data=this.props.detectResults;
-      data["results"].forEach((node, index) => {
-        if (node["vulnerability"] == 1) {
-          array = [...array, ...node["code_lines"]]
-          ArrayUniq = [...new Set(array)];
-        }
-      })
-      self.setState({arrayerrorline:ArrayUniq});
-    }
-  };
-
-
-
+  callbackFunction = (graphData) => {
+    this.props.parentCallback(graphData);
+  }
     render(){
-      const linesToHighlight = this.state.arrayerrorline,startingLineNumber = 1;
-        
+      const linesToHighlight = this.props.arrayerrorline,startingLineNumber = 1;
+      if(this.props.Detail){
         return(
-            <SyntaxHighlighter
+          <div>
+            <div className='PanelsBox'>
+              <SyntaxHighlighter
                   startingLineNumber={startingLineNumber}
                   language='solidity'
                   style={coy}
@@ -49,14 +28,33 @@ export default class SyntaxHighlighter_code extends Component{
                           style.backgroundColor = "#ffe7a4";
                       }
                       if(this.props.ClickNode.includes(lineNumber)){
-                        style.backgroundColor = "#DC143C";
+                        style.border = "1px solid red";
                       }
                       return { style };
                   }}>
                   {this.props.codeString}
               </SyntaxHighlighter>
-            
+              <div className='Graph'>
+                <Graph  ClickNode={this.props.ClickNode} 
+                        graph={this.props.graph} 
+                        parentCallback = {this.callbackFunction}></Graph>
+              </div>   
+            </div>
+            <div className='Lenged'>
+              <div className='Code_Lenged'>
+                <div className='note'><span id='yellow' ></span> Error Code Line</div> 
+                <div className='note'><span id='red_border' ></span> Code Line of Clicked Node </div> 
+              </div>
+              <div className='Graph_Lenged'>
+                <div className='note'><span id='red' ></span> Bug</div> 
+                <div className='note'><span id='white' ></span> Clean</div> 
+              </div>
+            </div>
+          </div>
         )
+      }
+        else return null;
+
     }
 }
 

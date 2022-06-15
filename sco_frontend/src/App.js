@@ -1,9 +1,9 @@
 import React,{Component} from 'react'; 
-import Graph from "./components/Graph";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {coy} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import "./App.css";
-import { ForceGraph2D} from 'react-force-graph';
+import Detail_error from './components/SH_code';
+import StackedChart from './components/Chart';
+import Graph_check from './components/graphcheck';
+
 
 
 class App extends Component { 
@@ -12,34 +12,131 @@ class App extends Component {
       super(props);
       this.state = { 
         // Initially, no file is selected 
-        selectedFile: null,
+        base64String:null,
         detectResults: null,
+        selectedFile:null,
         codeString :"",
         graph:{nodes: [],links: [],},
         arrayerrorline:[],
-        ClickNode:[]
+        ClickNode:[],
+        Access_control:'Access_control_green',
+        Arithmetic:'Arithmetic_red',
+        Denial_of_service:'Denial_of_service_green',
+        Front_running:'Front_running_green',
+        Reentrancy:'Reentrancy_green',
+        Time_manipulation:'Time_manipulation_red',
+        Unchecked_low_level_calls:'Unchecked_low_level_calls_red',
+        showGraphCheck: true,
+        showDetailCode:true,
+        showBarChart:false,
+        Error_type:{ Access_control:1,
+        Arithmetic:0,
+        Denial_of_service:1,
+        Front_running:0,
+        Reentrancy:1,
+        Time_manipulation:0,
+        Unchecked_low_level_calls:1},
+        series: [{
+          name: 'BUG',
+          color: "#C80A0A",
+          data: []
+        }, {
+          name: 'CLEAN',
+          data: []
+        }],
+        
       }; 
 
     }
 
-    callbackFunction = (graphData) => {
-      this.setState({ClickNode: graphData})
-    }
+    onClickChooseFile = (event) =>{
+      const realFileBtn = document.getElementById("input");
+      realFileBtn.click();
+    };
 
     // On file select (from the pop up) 
     onFileChange = event => { 
       // Update the state 
       this.setState({ selectedFile: event.target.files[0] });
-      this.setState({ClickNode:[]})
-    }
-    // On file upload (click the upload button) 
-    onSubmit = () => {
+      this.setState({ClickNode:[]});
+      this.setState({showBarChart:false,showDetailCode:false,showGraphCheck:false});
+
+      // Customize choose file button 
+      const customTxt = document.getElementById("custom-text");
+      if (event.target.files[0]) {
+        customTxt.innerHTML = event.target.files[0].name;
+      } else {
+        customTxt.innerHTML = "No file chosen";
+      }
+      //Convert a file to base64 string 
+      var fileInput = document.getElementById('input').files;
+      console.log(fileInput);
+      const reader = new FileReader();
+      let self=this;
       
-      // Create an object of formData 
-      let error_type=document.getElementById('selectError').value;
-      console.log(error_type)
-      console.log(this.state.selectedFile.name)
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/line/'+error_type
+      
+      reader.readAsDataURL(fileInput[0]);
+      reader.onload = function () {
+        const data = reader.result
+                .replace('data:', '')
+                .replace(/^.+,/, ''); 
+        self.setState({base64String:data})
+      };
+      reader.onerror = function (error) {
+        console.log('Error: ', error);
+      }; 
+    }
+
+    //Check to see what kind of errors the code encounters
+    onSubmit = () => {
+      //connect graph backend
+      console.log(JSON.stringify({smart_contract:this.state.base64String}));
+      let link='http://localhost:5555/v1.0.0/vulnerability/detection/graph/test'
+      console.log(link)
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'}
+      };
+      fetch(link, requestOptions)
+      .then(response => response.json())
+      .then(data =>console.log(data));
+      // Return vulnerability detection of 7 types of bug in smartcontract
+      let typeBugs=this.state.Error_type;
+      if(typeBugs.Access_control===1){
+        this.setState({Access_control:'Access_control_green'});
+      }
+      else  this.setState({Access_control:'Access_control_red'});
+      if(typeBugs.Arithmetic===1){
+        this.setState({Arithmetic:'Arithmetic_green'});
+      }
+      else  this.setState({Arithmetic:'Arithmetic_red'});
+      if(typeBugs.Denial_of_service===1){
+        this.setState({Denial_of_service:'Denial_of_service_green'});
+      }
+      else  this.setState({Denial_of_service:'Denial_of_service_red'});
+      if(typeBugs.Front_running===1){
+        this.setState({Front_running:'Front_running_green'});
+      }
+      else  this.setState({Front_running:'Front_running_red'});
+      if(typeBugs.Reentrancy===1){
+        this.setState({Reentrancy:'Reentrancy_green'});
+      }
+      else  this.setState({Reentrancy:'Reentrancy_red'});
+      if(typeBugs.Time_manipulation===1){
+        this.setState({Time_manipulation:'Time_manipulation_green'});
+      }
+      else  this.setState({Time_manipulation:'Time_manipulation_red'});
+      if(typeBugs. Unchecked_low_level_calls===1){
+        this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_green'});
+      }
+      else  this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_red'});
+
+      this.setState({showGraphCheck:true});
+    }; 
+
+    onClickDetail = event =>{
+      this.setState({showDetailCode:true})
+      let link='http://localhost:5555/v1.0.0/vulnerability/detection/line/reentrancy'
       console.log(link)
       const requestOptions = {
         method: 'POST',
@@ -49,10 +146,7 @@ class App extends Component {
       fetch(link, requestOptions)
       .then(response => response.json())
       .then(data => this.setState({ detectResults: data}));
-      
-      console.log(this.state.detectResults);
-        
-    }; 
+    }
     componentDidUpdate(prevProps,prevState){
       if(prevState.detectResults!==this.state.detectResults){
         var input = document.querySelector('input[type=file]').files[0];
@@ -62,8 +156,7 @@ class App extends Component {
         let array = []
         let ArrayUniq = []
         let self=this
-        
-
+      
         var data=this.state.detectResults;
         self.setState({graph:data["graph"]})
         console.log(data);
@@ -86,16 +179,39 @@ class App extends Component {
     handleSubmit = (event) => {
       event.preventDefault();
     };
+
+    callbackFunction = (graphData) => {
+      this.setState({ClickNode: graphData})
+    }
+ 
+    ShowChart=(event)=>{
+      this.setState({showBarChart:true});
+      let bug= [44, 55, 0, 67, 22, 0, 21];
+      let clean = [56, 45, 100, 33, 78, 100, 79];
+      var i=0;
+      var tmp=0;
+      let series=[{
+        name: 'BUG',
+        color: "#C80A0A",
+        data: []
+      }, {
+        name: 'CLEAN',
+        data: []
+      }];
+      for(i=0;i<7;i++){
+        tmp=bug[i];
+        series[0].data.push(tmp);
+        tmp=clean[i];
+        series[1].data.push(tmp);
+      }
+      this.setState({series:series});
+    };
+
+    //Show syntax highlight code and graph
+    
     
      
     render() {
-      const linesToHighlight = this.state.arrayerrorline,startingLineNumber = 1;
-      const data=this.state.graph
-      const nodes=data["nodes"].flat().map(app=>({id:app.id,name:app.name,nodeColor: app.color,code_lines:app.code_lines,error:app.error}))
-      const links=data["links"].flat().map(app=>({"source":app.source,"target":app.target}))
-      const myGraph={nodes,links};
-      const error=data["nodes"].flat().map(app=>({id:app.id,error:app.error}))
-      
       return ( 
         <div className='App'>
           <div className='top'>
@@ -109,45 +225,42 @@ class App extends Component {
           </div>
           <form onSubmit={this.handleSubmit} id="form">
           <div className='ControlsBox'> 
-                <input type="file" className='inputfile' id="input" onChange={this.onFileChange}/>
 
-                <select className='selectError' id='selectError'  defaultValue={"reentrancy"} onChange={this.onSelectChange}>
-                  <option value="access_control">access_control</option>
-                  <option value="arithmetic">arithmetic</option>
-                  <option value="denial_of_service">denial_of_service</option>
-                  <option value="front_running">front_running</option>
-                  <option value="reentrancy">reentrancy</option>
-                  <option value="time_manipulation">time_manipulation</option>
-                  <option value="unchecked_low_level_calls">unchecked_low_level_calls</option>
-                </select>
-                
+                <input type="file" className='inputfile' id="input" onChange={this.onFileChange} hidden="hidden" />
+                <div>
+                    <button type="button" id = "custom-button" onClick={this.onClickChooseFile}>CHOOSE A FILE</button>
+                    <span id="custom-text"> No file chosen</span>
+                </div>
                 <button className="Button" type="submit" onClick={this.onSubmit}> Submit </button>  
           </div>
-          </form> 
-          <div className='PanelsBox'> 
-              <SyntaxHighlighter
-                  startingLineNumber={startingLineNumber}
-                  language='solidity'
-                  style={coy}
-                  className='highlight'
-                  showLineNumbers
-                  wrapLines
-                  lineProps={(lineNumber) => {
-                      const style = { display: "block", width: "fit-content" };
-                      if (linesToHighlight.includes(lineNumber)) {
-                          style.backgroundColor = "#ffe7a4";
-                      }
-                      if(this.state.ClickNode.includes(lineNumber)){
-                        style.border = "1px solid red";
-                      }
-                      return { style };
-                  }}>
-                  {this.state.codeString}
-              </SyntaxHighlighter>
-            <div className='Graph'>
-              <Graph ClickNode={this.state.ClickNode} graph={this.state.graph} parentCallback = {this.callbackFunction}></Graph>
-            </div>     
-          </div>  
+          </form>
+          <Graph_check
+          Submit={this.state.showGraphCheck}
+          updateDetail={this.onClickDetail}
+          Access_control={this.state.Access_control}
+          Arithmetic={this.state.Arithmetic}
+          Denial_of_service={this.state.Denial_of_service}
+          Front_running={this.state.Front_running}
+          Reentrancy={this.state.Reentrancy}
+          Time_manipulation={this.state.Time_manipulation}
+          Unchecked_low_level_calls={this.state.Unchecked_low_level_calls}
+          ></Graph_check>
+
+          <StackedChart series={this.state.series} 
+          Click={this.ShowChart} 
+          showBarChart={this.state.showBarChart}
+          showGraphCheck={this.state.showGraphCheck}
+          ></StackedChart>
+
+          <Detail_error
+          Detail={this.state.showDetailCode}
+          arrayerrorline={this.state.arrayerrorline}
+          graph={this.state.graph}
+          codeString={this.state.codeString}
+          parentCallback={this.callbackFunction}
+          ClickNode={this.state.ClickNode}
+          ></Detail_error>
+          
         </div> 
       ); 
     } 

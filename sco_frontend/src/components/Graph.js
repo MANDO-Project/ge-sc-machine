@@ -81,12 +81,7 @@ export default class Graph extends PureComponent{
                 linkDirectionalParticles={4}
                 nodeLabel={node=>myGraph.nodes[node.id].name}
                 onNodeClick={handleClick}
-                
                 />
-            <div className='line_note'>
-                <div className='note' ><span id='red' ></span> Bug</div> 
-                <div className='note' ><span id='white' ></span> Clean</div> 
-            </div>
             </div>
            
         )
