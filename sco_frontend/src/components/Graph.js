@@ -3,7 +3,7 @@ import { ForceGraph2D} from 'react-force-graph';
 import "./graph.css";
 export default class Graph extends PureComponent{
     shouldComponentUpdate(nextProps) {
-        if (this.props.ClickNode === nextProps.ClickNode) {
+        if (this.props.ClickNode === nextProps.ClickNode && this.props.graph!=null) {
             console.log("graph-reload")
             return true;
         }

@@ -112,7 +112,7 @@ class StackedChart extends Component {
     if(this.props.showBarChart&&this.props.showGraphCheck){
       return (
         <div id="chart">
-        <ReactApexChart options={this.state.options} series={this.state.series} type="bar" height={450} />
+        <ReactApexChart options={this.state.options} series={this.props.series} type="bar" height={450} />
         </div>
       );
     }
