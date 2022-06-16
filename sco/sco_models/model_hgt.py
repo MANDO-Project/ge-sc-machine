@@ -8,7 +8,6 @@ import torch.nn.functional as F
 import networkx as nx
 import dgl.function as fn
 from dgl.nn.functional import edge_softmax
-from torch_geometric.nn import MetaPath2Vec
 
 from .graph_utils import add_hetero_ids, \
                          load_hetero_nx_graph, \
@@ -200,21 +199,6 @@ class HGTVulNodeClassifier(nn.Module):
             for ntype in self.symmetrical_global_graph.ntypes:
                 features[ntype] = self._nodetype2onehot(ntype).repeat(self.symmetrical_global_graph.num_nodes(ntype), 1).to(self.device)
             self.in_size = len(self.node_types)
-        elif node_feature == 'metapath2vec':
-            embedding_dim = 128
-            self.in_size = embedding_dim
-            for metapath in self.meta_paths:
-                _metapath_embedding = MetaPath2Vec(self.symmetrical_global_graph_data, embedding_dim=embedding_dim,
-                        metapath=metapath, walk_length=50, context_size=7,
-                        walks_per_node=5, num_negative_samples=5, num_nodes_dict=self.number_of_nodes,
-                        sparse=False)
-                ntype = metapath[0][0]
-                if ntype not in features.keys():
-                    features[ntype] = _metapath_embedding(ntype).unsqueeze(0)
-                else:
-                    features[ntype] = torch.cat((features[ntype], _metapath_embedding(ntype).unsqueeze(0)))
-            # Use mean for aggregate node features
-            features = {k: torch.mean(v, dim=0).to(self.device) for k, v in features.items()}
 
         self.symmetrical_global_graph = self.symmetrical_global_graph.to(self.device)
         # self.symmetrical_global_graph.ndata['feat'] = features
@@ -350,21 +334,6 @@ class HGTVulGraphClassifier(nn.Module):
             for ntype in self.symmetrical_global_graph.ntypes:
                 features[ntype] = self._nodetype2onehot(ntype).repeat(self.symmetrical_global_graph.num_nodes(ntype), 1).to(self.device)
             self.in_size = len(self.node_types)
-        elif node_feature == 'metapath2vec':
-            embedding_dim = 128
-            self.in_size = embedding_dim
-            for metapath in self.meta_paths:
-                _metapath_embedding = MetaPath2Vec(self.symmetrical_global_graph_data, embedding_dim=embedding_dim,
-                        metapath=metapath, walk_length=50, context_size=7,
-                        walks_per_node=5, num_negative_samples=5, num_nodes_dict=self.number_of_nodes,
-                        sparse=False)
-                ntype = metapath[0][0]
-                if ntype not in features.keys():
-                    features[ntype] = _metapath_embedding(ntype).unsqueeze(0)
-                else:
-                    features[ntype] = torch.cat((features[ntype], _metapath_embedding(ntype).unsqueeze(0)))
-            # Use mean for aggregate node features
-            features = {k: torch.mean(v, dim=0).to(self.device) for k, v in features.items()}
         elif node_feature == 'random':
             embedding_dim = int(feature_extractor)
             self.in_size = embedding_dim
