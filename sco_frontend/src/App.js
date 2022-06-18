@@ -2,14 +2,19 @@ import React,{Component, Suspense} from 'react'
 import "./App.css"
 import "./components/LoadingSpinner.css"
 import LoadingSpinner from "./components/LoadingSpinner";
-import Detail_error from './components/SH_code'
-import StackedChart from './components/Chart'
-import Graph_check from './components/graphcheck'
 import GithubCorner from 'react-github-corner'
 import LoadingOverlay from 'react-loading-overlay';
 import Loader from "react-loader";
 import styled, { css } from "styled-components";
 
+import Detail_error from './components/SH_code'
+import StackedChart from './components/Chart'
+import Graph_check from './components/graphcheck'
+import styled, { css } from "styled-components";
+import Select from 'react-select'; 
+import x from './examplefile/x.sol'
+import y from "./examplefile/y.sol"
+import z from "./examplefile/z.sol"
 
 const BugIds = {
   access_control: 0,
@@ -20,7 +25,11 @@ const BugIds = {
   time_manipulation: 5,
   unchecked_low_level_calls: 6
 }
-
+const optionsSelect = [
+  { value: x, label: 'Example_1.sol' },
+  { value: y, label: 'Example_2.sol' },
+  { value: z, label: 'Example_3.sol' },
+]; 
 
 const DarkBackground = styled.div`
   display: none; /* Hidden by default */
@@ -80,7 +89,8 @@ class App extends Component {
         Unchecked_low_level_calls:1},
         seriesBarChart: [],
         seriesHeatMap: [],
-        seriesArea: []
+        seriesArea: [],
+        selectOptions:null
       };
     }
     onClickChooseFile = (event) =>{
@@ -119,6 +129,17 @@ class App extends Component {
         console.log('Error: ', error)
       }
     }
+    onSelectChange = selectedOption => {
+      if(this.state.selectedFile==null){
+      this.setState({ selectedOption:selectedOption});
+      console.log(selectedOption);
+      fetch(selectedOption.value)
+      .then(r => r.text())
+      .then(text => {
+        console.log(btoa(text));
+        this.setState({base64String:btoa(text)});
+      });}
+    };
 
     //Check to see what kind of errors the code encounters
     onSubmit = () => {
@@ -238,7 +259,6 @@ class App extends Component {
       if(prevState.changeBugType!==this.state.changeBugType){
         let dataChart=this.state.detectReports['summaries']
         var i=0
-        var tmp=0
         // BarChart series
         let seriesBarChart= [
           {
@@ -310,6 +330,7 @@ class App extends Component {
     //Show syntax highlight code and graph
 
     render() {
+      const selectOptions=this.state.selectOptions;
       return (
         <div className='App'>
           <div className='top'>
@@ -331,6 +352,9 @@ class App extends Component {
                     <button type="button" id = "custom-button" onClick={this.onClickChooseFile}>CHOOSE A FILE</button>
                     <span id="custom-text"> No file chosen</span>
                 </div>
+                <Select options={optionsSelect}
+                onChange={this.onSelectChange}
+                />
                 <button className="Button" type="submit" onClick={this.onSubmit}> Submit </button>
                 <DarkBackground disappear={this.state.isLoading}>
                   <LoadingOverlay
