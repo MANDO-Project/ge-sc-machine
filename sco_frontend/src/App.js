@@ -1,11 +1,21 @@
 import React,{Component, Suspense} from 'react' 
 import "./App.css"
 import "./components/LoadingSpinner.css"
-import LoadingSpinner from "./components/LoadingSpinner";
+import Detail_error from './components/SH_code'
+import StackedChart from './components/Chart'
+import Graph_check from './components/graphcheck'
 import GithubCorner from 'react-github-corner'
 import LoadingOverlay from 'react-loading-overlay';
-import Loader from "react-loader";
+import Alert from 'react-popup-alert'
 import styled, { css } from "styled-components";
+// import { useAlert } from "react-alert";
+
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import {decode as encode as base64_encode} from 'base-64';
+import sample0 from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol';
+
 
 import Detail_error from './components/SH_code'
 import StackedChart from './components/Chart'
@@ -90,13 +100,19 @@ class App extends Component {
         seriesBarChart: [],
         seriesHeatMap: [],
         seriesArea: [],
-        selectOptions:null
+        selectOptions:null,
+        alert: {
+          type: 'error',
+          text: 'This is a alert message',
+          show: false
+        },
       };
+      // const alert = useAlert();
     }
     onClickChooseFile = (event) =>{
       const realFileBtn = document.getElementById("input")
-      realFileBtn.click();
-    };
+      realFileBtn.click()
+    }
 
     // On file select (from the pop up)
     onFileChange = event => {
@@ -155,12 +171,71 @@ class App extends Component {
       fetch(report_api, reportRequestOptions)
       .then(response => response.json())
       .then(data => {
+        if (data['messages'] !== 'OK') {
+          this.setState({
+            alert: {
+              type: 'error',
+              text: data['messages'],
+              show: true
+            }
+          })
+        }
         this.setState({detectReports:data})
         this.setState({newSubmit: true})
         // console.log('request: ', this.newSubmit)
         this.setState({isLoading: false})
       })
+    }
+
+    onClickSample = (event) => {
+      // this.setState({ selectedFile: event.target.files[0] })
+      this.setState({ClickNode:[]})
+      this.setState({showBarChart:false,showHeatMap:false,showDetailCode:false,showGraphCheck:false})
+      let encoded = null
+      fetch(sample0)
+      .then(r => r.text())
+      .then(text => {
+        encoded = base64_encode(text);
+        this.setState({base64String:encoded})
+      });
+
+      this.setState({isLoading: true})
+      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      const reportRequestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json',
+                    'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
+        body: JSON.stringify({smart_contract:encoded})
       }
+      fetch(report_api, reportRequestOptions)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({detectReports:data})
+        this.setState({newSubmit: true})
+        // console.log('request: ', this.newSubmit)
+        this.setState({isLoading: false})
+      })
+    }
+
+    onSample1 = () => {
+      //connect graph backend
+      this.setState({isLoading: true})
+      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      const reportRequestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json',
+                    'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
+        body: JSON.stringify({smart_contract:this.state.base64String})
+      }
+      fetch(report_api, reportRequestOptions)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({newSubmit: true})
+        this.setState({detectReports:data})
+        // console.log('request: ', this.newSubmit)
+        this.setState({isLoading: false})
+      })
+    }
 
     //Detail Button
     onClickDetail_Access_control = event =>{
@@ -198,6 +273,15 @@ class App extends Component {
       this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
+
+    onCloseAlert = () => {
+      this.setState({alert: {
+        type: '',
+        text: '',
+        show: false
+      }})
+    }
+
     //componentDidUpdate
     componentDidUpdate(prevProps,prevState){
       if(prevState.changeBugType!==this.state.changeBugType){
@@ -223,38 +307,45 @@ class App extends Component {
         reader.readAsBinaryString(input)
       }
 
-      if(prevState.newSubmit!==this.state.newSubmit){
+      if(this.state.newSubmit && this.state.detectReports['messages'] === 'OK'){
         let typeBugs=this.state.detectReports['summaries']
         if(typeBugs[0]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Access_control:'Access_control_green'})
         }
         else  this.setState({Access_control:'Access_control_red'})
         if(typeBugs[1]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Arithmetic:'Arithmetic_green'})
         }
         else  this.setState({Arithmetic:'Arithmetic_red'})
         if(typeBugs[2]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Denial_of_service:'Denial_of_service_green'})
         }
         else  this.setState({Denial_of_service:'Denial_of_service_red'})
         if(typeBugs[3]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Front_running:'Front_running_green'})
         }
         else  this.setState({Front_running:'Front_running_red'})
         if(typeBugs[4]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Reentrancy:'Reentrancy_green'})
         }
         else  this.setState({Reentrancy:'Reentrancy_red'})
         if(typeBugs[5]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Time_manipulation:'Time_manipulation_green'})
         }
         else  this.setState({Time_manipulation:'Time_manipulation_red'})
         if(typeBugs[6]['vulnerability']===0){
+          this.setState({newSubmit: false})
           this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_green'})
         }
         else  this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_red'})
-        this.setState({newSubmit: false})
-        this.setState({showGraphCheck:true})
+          this.setState({newSubmit: false})
+          this.setState({showGraphCheck:true})
       }
       if(prevState.changeBugType!==this.state.changeBugType){
         let dataChart=this.state.detectReports['summaries']
@@ -328,10 +419,11 @@ class App extends Component {
     }
 
     //Show syntax highlight code and graph
-
+    
     render() {
       const selectOptions=this.state.selectOptions;
       return (
+        
         <div className='App'>
           <div className='top'>
           <div id='github'>
@@ -366,7 +458,30 @@ class App extends Component {
                   </LoadingOverlay>
                 </DarkBackground>
           </div>
+          <hr/>
+          <div>
+            <button className="Button" type="submit" onClick={this.onClickSample}> 0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol</button>
+            <button className="Button" type="submit" onClick={this.onClickSample}> simple_dao.sol</button>
+            <button className="Button" type="submit" onClick={this.onClickSample}> multiowned_vulnerable.sol</button>
+            <button className="Button" type="submit" onClick={this.onClickSample}> buggy_1.sol</button>
+          </div>
           </form>
+          <div>
+          <Alert
+            header={'Failed!'}
+            btnText={'Close'}
+            text={this.state.alert.text}
+            type={this.state.alert.type}
+            show={this.state.alert.show}
+            onClosePress={this.onCloseAlert}
+            pressCloseOnOutsideClick={true}
+            showBorderBottom={true}
+            alertStyles={{}}
+            headerStyles={{}}
+            textStyles={{}}
+            buttonStyles={{}}
+            />
+          </div>
             <Graph_check
             Submit={this.state.showGraphCheck}
             Access_control={this.state.Access_control}

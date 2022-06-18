@@ -43,7 +43,7 @@ logger = Logger(__name__)
 router = APIRouter()
 
 
-CATEGORIES_OF_HEATMAP = 20
+CATEGORIES_OF_HEATMAP = 15
 
 is_gpu = check_gpu()
 
@@ -291,7 +291,7 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
         bug_density = []
         for i in range(CATEGORIES_OF_HEATMAP):
             heatmap_point = {}
-            heatmap_point['x'] = f'{int(i * line_per_category)}-{int((i+1) * line_per_category)}'
+            heatmap_point['x'] = f'{int(i * line_per_category) + 1}-{int((i+1) * line_per_category)}'
             heatmap_point['y'] = bug_population[int(i * line_per_category) : int((i+1) * line_per_category)].tolist().count(1)
             bug_density.append(heatmap_point)
         report['bug_density'] = bug_density
@@ -301,7 +301,8 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
     logger.debug(total_reports)
     response = {'summaries': total_reports,
                 'smart_contract_length': sm_length,
-                'heatmap_categories': CATEGORIES_OF_HEATMAP}
+                'heatmap_categories': CATEGORIES_OF_HEATMAP,
+                'messages': 'OK'}
     return response
 
 
