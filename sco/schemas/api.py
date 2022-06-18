@@ -1,6 +1,7 @@
 import base64
 import binascii
 from dis import disco
+from email import message
 from typing import Any, List, Dict, Optional
 
 from uuid import UUID, uuid4
@@ -32,16 +33,18 @@ class ContractRequest(BaseModel):
 
 class NodeDetectReponse(BaseModel):
     id: UUID = uuid4()
-    message: str
+    message: Optional[str]
     results: Optional[List]
     graph: Optional[Dict]
 
 
 class MultiBuggyNodeDetectReponse(BaseModel):
     id: UUID = uuid4()
-    summaries: List
-    smart_contract_length: int
-    heatmap_categories: int
+    messages: Optional[str]
+    summaries: Optional[List]
+    # summaries: Optional[Dict]
+    smart_contract_length: Optional[int]
+    heatmap_categories: Optional[int]
 
 
 class MultiBuggyGraphDetectReponse(BaseModel):
