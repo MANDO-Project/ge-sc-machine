@@ -198,3 +198,73 @@ input#file-upload-button{
   background-color:white;
   border: 3px solid red;
 }
+
+
+
+.alert-main {
+  animation: fadeIn ease 0.5s;
+  width: 500px;
+  margin-left: 30%;
+  border-radius: 10px;
+  text-align: center;
+  position: fixed;
+  background-color: white;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+  top: 20vh;
+  left: calc(50vw - 250);
+  /* @media (max-width: $alert-width+$alert-extra-padding) {
+    width: 90vw;
+    left: 5vw;
+  } */
+}
+
+.alert-header {
+  font-size: 35px;
+  font-weight: 600;
+}
+
+.alert-body {
+  text-align: center;
+  font-size: 30px;
+}
+
+.alert-button {
+  width: 90px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  border-radius: 40px;
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: 30px;
+  align-items: center;
+  position: relative;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.backdrop {
+  animation: fadeIn ease 1s;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9998;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
