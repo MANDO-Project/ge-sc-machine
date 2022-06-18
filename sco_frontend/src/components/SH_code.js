@@ -28,7 +28,7 @@ export default class  Detail_error extends Component{
                           style.backgroundColor = "#ffe7a4";
                       }
                       if(this.props.ClickNode.includes(lineNumber)){
-                        style.border = "1px solid red";
+                        style.border = "px solid red";
                       }
                       return { style };
                   }}>

@@ -1,17 +1,55 @@
-import React,{Component} from 'react' 
+import React,{Component, Suspense} from 'react' 
 import "./App.css"
+import "./components/LoadingSpinner.css"
+import LoadingSpinner from "./components/LoadingSpinner";
 import Detail_error from './components/SH_code'
 import StackedChart from './components/Chart'
 import Graph_check from './components/graphcheck'
+import GithubCorner from 'react-github-corner'
+// import LoadingOverlay from 'react-loading-overlay';
+import Loader from "react-loader";
+import styled, { css } from "styled-components";
 
+
+const BugIds = {
+  access_control: 0,
+  arithmetic: 1,
+  denial_of_service: 2,
+  front_running: 3,
+  reentrancy: 4,
+  time_manipulation: 5,
+  unchecked_low_level_calls: 6
+}
+
+
+const DarkBackground = styled.div`
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 999; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+
+  ${(props) =>
+    props.disappear &&
+    css`
+      display: block; /* show */
+    `}
+`;
 
 
 class App extends Component {
-
     constructor(props){
       super(props)
       this.state = {
         // Initially, no file is selected
+        isLoading: true,
+        newSubmit: false,
+        detectReports:null,
         base64String:null,
         detectResults: null,
         detectGraphs:null,
@@ -28,9 +66,11 @@ class App extends Component {
         Reentrancy:'Reentrancy_green',
         Time_manipulation:'Time_manipulation_red',
         Unchecked_low_level_calls:'Unchecked_low_level_calls_red',
+        changeBugType: false,
         showGraphCheck: false,
         showDetailCode:false,
         showBarChart:false,
+        showHeatMap: false,
         Error_type:{ Access_control:1,
         Arithmetic:0,
         Denial_of_service:1,
@@ -38,26 +78,11 @@ class App extends Component {
         Reentrancy:1,
         Time_manipulation:0,
         Unchecked_low_level_calls:1},
-        seriesBarChart: [
-          {
-            name: 'BUG',
-            type: 'column',
-            data: [40, 70, 30, 0, 22, 80, 35]
-          },
-          {
-            name: "CLEAN",
-            type: 'column',
-            data: [60, 30, 70, 100, 78, 20,65]
-          },
-          {
-            name: "TIME",
-            type: 'line',
-            data: [4, 3.2, 2.8, 1.5,3, 2.8, 3.8]
-          },
-        ],
+        seriesBarChart: [],
+        seriesHeatMap: [],
+        seriesArea: []
       };
     }
-
     onClickChooseFile = (event) =>{
       const realFileBtn = document.getElementById("input")
       realFileBtn.click();
@@ -65,21 +90,21 @@ class App extends Component {
 
     // On file select (from the pop up)
     onFileChange = event => {
-      // Update the state 
+      // Update the state
       this.setState({ selectedFile: event.target.files[0] })
       this.setState({ClickNode:[]})
-      this.setState({showBarChart:false,showDetailCode:false,showGraphCheck:false})
+      this.setState({showBarChart:false,showHeatMap:false,showDetailCode:false,showGraphCheck:false})
 
       // Customize choose file button
       const customTxt = document.getElementById("custom-text")
       if (event.target.files[0]) {
-        customTxt.innerHTML = event.target.files[0].name;
+        customTxt.innerHTML = event.target.files[0].name
       } else {
         customTxt.innerHTML = "No file chosen"
       }
       //Convert a file to base64 string
       var fileInput = document.getElementById('input').files
-      console.log(fileInput)
+      // console.log(fileInput)
       const reader = new FileReader()
       let self=this
 
@@ -92,128 +117,77 @@ class App extends Component {
       }
       reader.onerror = function (error) {
         console.log('Error: ', error)
-      } 
+      }
     }
 
     //Check to see what kind of errors the code encounters
     onSubmit = () => {
       //connect graph backend
-      console.log(JSON.stringify({smart_contract:this.state.base64String}))
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/graph/nodetype'
-      console.log(link)
-      const requestOptions = {
+      this.setState({isLoading: false})
+      console.log(this.isLoading)
+      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      const reportRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
+                    'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
         body: JSON.stringify({smart_contract:this.state.base64String})
       }
-      fetch(link, requestOptions)
+      fetch(report_api, reportRequestOptions)
       .then(response => response.json())
-      .then(data =>this.setState({detectGraphs:data}))
-      // Return vulnerability detection of 7 types of bug in smartcontract
-    }
+      .then(data => {
+        this.setState({detectReports:data})
+        this.setState({newSubmit: true})
+        // console.log('request: ', this.newSubmit)
+        this.setState({isLoading: true})
+        console.log(this.isLoading)
+      })
+      }
+
     //Detail Button
     onClickDetail_Access_control = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/access_control/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.access_control]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     onClickDetail_Arithmetic = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/arithmetic/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.arithmetic]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     onClickDetail_Denial_of_service = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/denial_of_service/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
-      this.setState({showDetailCode:true})
-    }
-    onClickDetail_Reentrancy = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/reentrancy/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.denial_of_service]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     onClickDetail_Front_running = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/front_running/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.front_running]})
+      this.setState({changeBugType:true})
+      this.setState({showDetailCode:true})
+    }
+    onClickDetail_Reentrancy = event =>{
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.reentrancy]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     onClickDetail_Time_manipulation = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/time_manipulation/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.time_manipulation]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     onClickDetail_Unchecked_low_level_calls = event =>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/unchecked_low_level_calls/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {if(data["results"]!=null){this.setState({detectResults:data})}})
+      this.setState({detectResults:this.state.detectReports['summaries'][BugIds.unchecked_low_level_calls]})
+      this.setState({changeBugType:true})
       this.setState({showDetailCode:true})
     }
     //componentDidUpdate
+    componentDidMount () {
+      this.setState({isLoading: true})
+      console.log(this.isLoading)
+    }
+
     componentDidUpdate(prevProps,prevState){
-      if(prevState.detectResults!==this.state.detectResults){
+      console.log(this.isLoading)
+      if(prevState.changeBugType!==this.state.changeBugType){
         var input = document.querySelector('input[type=file]').files[0]
         var reader = new FileReader()
         let array = []
@@ -221,7 +195,6 @@ class App extends Component {
         let self=this
         var data=this.state.detectResults
         self.setState({graph:data["graph"]})
-        console.log(data)
         reader.onload = function (event) {
           self.setState({codeString: event.target.result})
           if(data["results"]!=null){
@@ -237,43 +210,44 @@ class App extends Component {
         reader.readAsBinaryString(input)
       }
 
-      if(prevState.detectGraphs!==this.state.detectGraphs){
-        let typeBugs=this.state.detectGraphs['summaries']
-        if(typeBugs[0]['vulnerability']===1){
+      if(prevState.newSubmit!==this.state.newSubmit){
+        let typeBugs=this.state.detectReports['summaries']
+        if(typeBugs[0]['vulnerability']===0){
           this.setState({Access_control:'Access_control_green'})
         }
         else  this.setState({Access_control:'Access_control_red'})
-        if(typeBugs[1]['vulnerability']===1){
+        if(typeBugs[1]['vulnerability']===0){
           this.setState({Arithmetic:'Arithmetic_green'})
         }
         else  this.setState({Arithmetic:'Arithmetic_red'})
-        if(typeBugs[2]['vulnerability']===1){
+        if(typeBugs[2]['vulnerability']===0){
           this.setState({Denial_of_service:'Denial_of_service_green'})
         }
         else  this.setState({Denial_of_service:'Denial_of_service_red'})
-        if(typeBugs[3]['vulnerability']===1){
+        if(typeBugs[3]['vulnerability']===0){
           this.setState({Front_running:'Front_running_green'})
         }
         else  this.setState({Front_running:'Front_running_red'})
-        if(typeBugs[4]['vulnerability']===1){
+        if(typeBugs[4]['vulnerability']===0){
           this.setState({Reentrancy:'Reentrancy_green'})
         }
         else  this.setState({Reentrancy:'Reentrancy_red'})
-        if(typeBugs[5]['vulnerability']===1){
+        if(typeBugs[5]['vulnerability']===0){
           this.setState({Time_manipulation:'Time_manipulation_green'})
         }
         else  this.setState({Time_manipulation:'Time_manipulation_red'})
-        if(typeBugs[6]['vulnerability']===1){
+        if(typeBugs[6]['vulnerability']===0){
           this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_green'})
         }
         else  this.setState({Unchecked_low_level_calls:'Unchecked_low_level_calls_red'})
-
+        this.setState({newSubmit: false})
         this.setState({showGraphCheck:true})
       }
-      if(prevState.DataChart!==this.state.DataChart){
-        let dataChart=this.state.DataChart['summaries']
+      if(prevState.changeBugType!==this.state.changeBugType){
+        let dataChart=this.state.detectReports['summaries']
         var i=0
         var tmp=0
+        // BarChart series
         let seriesBarChart= [
           {
             name: 'BUG',
@@ -285,23 +259,47 @@ class App extends Component {
             type: 'column',
             data: []
           },
-          {
-            name: "TIME",
-            type: 'line',
-            data: []
+        ]
+        let seriesArea = [
+          {name: 'Graph Runtime',
+           type: 'line',
+           data: []
           },
+          {name: 'Node Runtime',
+           type: 'line',
+           data: []
+          }
         ]
         for(i=0;i<7;i++){
-          tmp=dataChart[i]['number_of_bug_node']
-          seriesBarChart[0].data.push(tmp)
-          tmp=dataChart[i]['number_of_normal_node']
-          seriesBarChart[1].data.push(tmp)
-          tmp=dataChart[i]['runtime']
-          seriesBarChart[2].data.push(tmp)
+          seriesBarChart[0].data.push(dataChart[i]['number_of_bug_node'])
+          seriesBarChart[1].data.push(dataChart[i]['number_of_normal_node'])
+          seriesArea[0].data.push(dataChart[i]['graph_runtime'])
+          seriesArea[1].data.push(dataChart[i]['node_runtime'])
         }
-      this.setState({seriesBarChart:seriesBarChart})
+        // HeatMap serires
+        let seriesHeatMap = [
+          {name: 'Access_control',
+           data: dataChart[0]['bug_density']},
+          {name: 'Arithmetic',
+          data: dataChart[1]['bug_density']},
+          {name: 'Denial_of_service',
+          data: dataChart[2]['bug_density']},
+          {name: 'Front_running',
+          data: dataChart[3]['bug_density']},
+          {name: 'Reentrancy',
+          data: dataChart[4]['bug_density']},
+          {name: 'Time_manipulation',
+          data: dataChart[5]['bug_density']},
+          {name: 'Unchecked_low_level_calls_red',
+          data: dataChart[6]['bug_density']},
+        ]
+        
+        this.setState({changeBugType: false})
+        this.setState({seriesBarChart:seriesBarChart})
+        this.setState({seriesArea:seriesArea})
+        this.setState({seriesHeatMap:seriesHeatMap})
       }
-    };
+    }
 
     handleSubmit = (event) => {
       event.preventDefault()
@@ -312,18 +310,9 @@ class App extends Component {
     }
 
     ShowChart=(event)=>{
-      let link='http://localhost:5555/v1.0.0/vulnerability/detection/node/nodetype'
-      console.log(link)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(link, requestOptions)
-      .then(response => response.json())
-      .then(data => {this.setState({DataChart:data})})
+      this.setState({DataChart:this.detectReports})
       this.setState({showBarChart:true})
+      this.setState({showHeatMap: true})
     }
 
     //Show syntax highlight code and graph
@@ -332,6 +321,9 @@ class App extends Component {
       return (
         <div className='App'>
           <div className='top'>
+          <div id='github'>
+            <GithubCorner href='https://github.com/CIKM-2021/hive-db' direction='left'/>
+          </div>
             <h1>🏁 Smart Contract Vulnerability Detection - SCO Demo</h1>
             <a href="https://github.com/erichoang/ge-sc">
               More details
@@ -341,49 +333,71 @@ class App extends Component {
             </p>
           </div>
           <form onSubmit={this.handleSubmit} id="form">
-          <div className='ControlsBox'> 
-
+          <div className='ControlsBox'>
                 <input type="file" className='inputfile' id="input" onChange={this.onFileChange} hidden="hidden" />
                 <div>
                     <button type="button" id = "custom-button" onClick={this.onClickChooseFile}>CHOOSE A FILE</button>
                     <span id="custom-text"> No file chosen</span>
                 </div>
-                    <button className="Button" type="submit" onClick={this.onSubmit}> Submit </button>  
+                <button className="Button" type="submit" onClick={this.onSubmit}> Submit </button>
+                {/* <Loader
+                  loaded={this.isLoading}
+                  lines={13}
+                  length={20}
+                  width={10}
+                  radius={30}
+                  corners={1}
+                  rotate={0}
+                  direction={1}
+                  color="#000"
+                  speed={1}
+                  trail={60}
+                  shadow={false}
+                  hwaccel={false}
+                  className="spinner"
+                  zIndex={2e9}
+                  top="50%"
+                  left="50%"
+                  scale={1.0}
+                  loadedClassName="loadedContent"
+                /> */}
           </div>
           </form>
-          <Graph_check
-          Submit={this.state.showGraphCheck}
-          Access_control={this.state.Access_control}
-          Arithmetic={this.state.Arithmetic}
-          Denial_of_service={this.state.Denial_of_service}
-          Front_running={this.state.Front_running}
-          Reentrancy={this.state.Reentrancy}
-          Time_manipulation={this.state.Time_manipulation}
-          Unchecked_low_level_calls={this.state.Unchecked_low_level_calls}
-          Reentrancy_button={this.onClickDetail_Reentrancy}
-          Access_control_button={this.onClickDetail_Access_control}
-          Arithmetic_button={this.onClickDetail_Arithmetic}
-          Denial_of_service_button={this.onClickDetail_Denial_of_service}
-          Front_running_button={this.onClickDetail_Front_running}
-          Time_manipulation_button={this.onClickDetail_Time_manipulation}
-          Unchecked_low_level_calls_button={this.onClickDetail_Unchecked_low_level_calls}
-          ></Graph_check>
+            <Graph_check
+            Submit={this.state.showGraphCheck}
+            Access_control={this.state.Access_control}
+            Arithmetic={this.state.Arithmetic}
+            Denial_of_service={this.state.Denial_of_service}
+            Front_running={this.state.Front_running}
+            Reentrancy={this.state.Reentrancy}
+            Time_manipulation={this.state.Time_manipulation}
+            Unchecked_low_level_calls={this.state.Unchecked_low_level_calls}
+            Access_control_button={this.onClickDetail_Access_control}
+            Arithmetic_button={this.onClickDetail_Arithmetic}
+            Denial_of_service_button={this.onClickDetail_Denial_of_service}
+            Front_running_button={this.onClickDetail_Front_running}
+            Reentrancy_button={this.onClickDetail_Reentrancy}
+            Time_manipulation_button={this.onClickDetail_Time_manipulation}
+            Unchecked_low_level_calls_button={this.onClickDetail_Unchecked_low_level_calls}
+            ></Graph_check>
 
-          <Detail_error
-          Detail={this.state.showDetailCode}
-          arrayerrorline={this.state.arrayerrorline}
-          graph={this.state.graph}
-          codeString={this.state.codeString}
-          parentCallback={this.callbackFunction}
-          ClickNode={this.state.ClickNode}
-          ></Detail_error>
+            <Detail_error
+            Detail={this.state.showDetailCode}
+            arrayerrorline={this.state.arrayerrorline}
+            graph={this.state.graph}
+            codeString={this.state.codeString}
+            parentCallback={this.callbackFunction}
+            ClickNode={this.state.ClickNode}
+            ></Detail_error>
 
-          <StackedChart series={this.state.seriesBarChart} 
-          Click={this.ShowChart} 
-          showBarChart={this.state.showBarChart}
-          showGraphCheck={this.state.showGraphCheck}
-          ></StackedChart>
-
+            <StackedChart 
+            series={this.state.seriesBarChart}
+            heatMapSeries={this.state.seriesHeatMap}
+            areaSeries={this.state.seriesArea}
+            Click={this.ShowChart} 
+            showBarChart={this.state.showBarChart}
+            showGraphCheck={this.state.showGraphCheck}
+            ></StackedChart>
         </div>
       )
     }
