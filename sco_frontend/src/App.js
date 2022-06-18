@@ -6,7 +6,7 @@ import Detail_error from './components/SH_code'
 import StackedChart from './components/Chart'
 import Graph_check from './components/graphcheck'
 import GithubCorner from 'react-github-corner'
-// import LoadingOverlay from 'react-loading-overlay';
+import LoadingOverlay from 'react-loading-overlay';
 import Loader from "react-loader";
 import styled, { css } from "styled-components";
 
@@ -47,7 +47,7 @@ class App extends Component {
       super(props)
       this.state = {
         // Initially, no file is selected
-        isLoading: true,
+        isLoading: false,
         newSubmit: false,
         detectReports:null,
         base64String:null,
@@ -123,8 +123,7 @@ class App extends Component {
     //Check to see what kind of errors the code encounters
     onSubmit = () => {
       //connect graph backend
-      this.setState({isLoading: false})
-      console.log(this.isLoading)
+      this.setState({isLoading: true})
       let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
       const reportRequestOptions = {
         method: 'POST',
@@ -138,8 +137,7 @@ class App extends Component {
         this.setState({detectReports:data})
         this.setState({newSubmit: true})
         // console.log('request: ', this.newSubmit)
-        this.setState({isLoading: true})
-        console.log(this.isLoading)
+        this.setState({isLoading: false})
       })
       }
 
@@ -180,13 +178,7 @@ class App extends Component {
       this.setState({showDetailCode:true})
     }
     //componentDidUpdate
-    componentDidMount () {
-      this.setState({isLoading: true})
-      console.log(this.isLoading)
-    }
-
     componentDidUpdate(prevProps,prevState){
-      console.log(this.isLoading)
       if(prevState.changeBugType!==this.state.changeBugType){
         var input = document.querySelector('input[type=file]').files[0]
         var reader = new FileReader()
@@ -340,27 +332,15 @@ class App extends Component {
                     <span id="custom-text"> No file chosen</span>
                 </div>
                 <button className="Button" type="submit" onClick={this.onSubmit}> Submit </button>
-                {/* <Loader
-                  loaded={this.isLoading}
-                  lines={13}
-                  length={20}
-                  width={10}
-                  radius={30}
-                  corners={1}
-                  rotate={0}
-                  direction={1}
-                  color="#000"
-                  speed={1}
-                  trail={60}
-                  shadow={false}
-                  hwaccel={false}
-                  className="spinner"
-                  zIndex={2e9}
-                  top="50%"
-                  left="50%"
-                  scale={1.0}
-                  loadedClassName="loadedContent"
-                /> */}
+                <DarkBackground disappear={this.state.isLoading}>
+                  <LoadingOverlay
+                    active={true}
+                    // spinner={<BounceLoader />}
+                    spinner={true}
+                    text="Scanning smart contract ... "
+                  >
+                  </LoadingOverlay>
+                </DarkBackground>
           </div>
           </form>
             <Graph_check
