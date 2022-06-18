@@ -89,8 +89,8 @@ class App extends Component {
         Unchecked_low_level_calls:1},
         seriesBarChart: [],
         seriesHeatMap: [],
-        seriesArea: [],
-        selectOptions:null
+        seriesArea: []
+
       };
     }
     onClickChooseFile = (event) =>{
@@ -101,9 +101,18 @@ class App extends Component {
     // On file select (from the pop up)
     onFileChange = event => {
       // Update the state
+      console.log(event.target.files[0])
       this.setState({ selectedFile: event.target.files[0] })
       this.setState({ClickNode:[]})
       this.setState({showBarChart:false,showHeatMap:false,showDetailCode:false,showGraphCheck:false})
+      //readfile
+      let self=this
+      var input = document.querySelector('input[type=file]').files[0]
+      var reader = new FileReader()
+      reader.onload = function (event) {
+        self.setState({codeString: event.target.result})
+      }
+      reader.readAsBinaryString(input)
 
       // Customize choose file button
       const customTxt = document.getElementById("custom-text")
@@ -115,9 +124,8 @@ class App extends Component {
       //Convert a file to base64 string
       var fileInput = document.getElementById('input').files
       // console.log(fileInput)
-      const reader = new FileReader()
-      let self=this
-
+      reader = new FileReader()
+      
       reader.readAsDataURL(fileInput[0])
       reader.onload = function () {
         const data = reader.result
@@ -130,15 +138,13 @@ class App extends Component {
       }
     }
     onSelectChange = selectedOption => {
-      if(this.state.selectedFile==null){
-      this.setState({ selectedOption:selectedOption});
-      console.log(selectedOption);
       fetch(selectedOption.value)
       .then(r => r.text())
       .then(text => {
+        this.setState({codeString: text})
         console.log(btoa(text));
         this.setState({base64String:btoa(text)});
-      });}
+      });
     };
 
     //Check to see what kind of errors the code encounters
@@ -201,26 +207,20 @@ class App extends Component {
     //componentDidUpdate
     componentDidUpdate(prevProps,prevState){
       if(prevState.changeBugType!==this.state.changeBugType){
-        var input = document.querySelector('input[type=file]').files[0]
-        var reader = new FileReader()
         let array = []
         let ArrayUniq = []
         let self=this
         var data=this.state.detectResults
         self.setState({graph:data["graph"]})
-        reader.onload = function (event) {
-          self.setState({codeString: event.target.result})
-          if(data["results"]!=null){
-            data["results"].forEach((node, index) => {
-              if (node["vulnerability"] == 1) {
-                array = [...array, ...node["code_lines"]]
-                ArrayUniq = [...new Set(array)]
-              }
-            })
-          self.setState({arrayerrorline:ArrayUniq})
-          }
+        if(data["results"]!=null){
+          data["results"].forEach((node, index) => {
+            if (node["vulnerability"] == 1) {
+              array = [...array, ...node["code_lines"]]
+              ArrayUniq = [...new Set(array)]
+            }
+          })
+        self.setState({arrayerrorline:ArrayUniq})
         }
-        reader.readAsBinaryString(input)
       }
 
       if(prevState.newSubmit!==this.state.newSubmit){
