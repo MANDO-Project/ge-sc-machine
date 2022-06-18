@@ -1,6 +1,5 @@
 import React,{Component, Suspense} from 'react' 
 import "./App.css"
-import "./components/LoadingSpinner.css"
 import Detail_error from './components/SH_code'
 import StackedChart from './components/Chart'
 import Graph_check from './components/graphcheck'
@@ -13,18 +12,14 @@ import styled, { css } from "styled-components";
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import {decode as encode as base64_encode} from 'base-64';
+import {encode as base64_encode} from 'base-64';
 import sample0 from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol';
 
 
-import Detail_error from './components/SH_code'
-import StackedChart from './components/Chart'
-import Graph_check from './components/graphcheck'
-import styled, { css } from "styled-components";
 import Select from 'react-select'; 
-import x from './examplefile/x.sol'
-import y from "./examplefile/y.sol"
-import z from "./examplefile/z.sol"
+import x from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol'
+import y from "./smart_contracts/simple_dao.sol"
+import z from "./smart_contracts/buggy_1.sol"
 
 const BugIds = {
   access_control: 0,
@@ -36,9 +31,9 @@ const BugIds = {
   unchecked_low_level_calls: 6
 }
 const optionsSelect = [
-  { value: x, label: 'Example_1.sol' },
-  { value: y, label: 'Example_2.sol' },
-  { value: z, label: 'Example_3.sol' },
+  { value: x, label: '0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol' },
+  { value: y, label: 'simple_dao.sol' },
+  { value: z, label: 'buggy_1.sol' },
 ]; 
 
 const DarkBackground = styled.div`
@@ -459,12 +454,12 @@ class App extends Component {
                 </DarkBackground>
           </div>
           <hr/>
-          <div>
+          {/* <div>
             <button className="Button" type="submit" onClick={this.onClickSample}> 0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol</button>
             <button className="Button" type="submit" onClick={this.onClickSample}> simple_dao.sol</button>
             <button className="Button" type="submit" onClick={this.onClickSample}> multiowned_vulnerable.sol</button>
             <button className="Button" type="submit" onClick={this.onClickSample}> buggy_1.sol</button>
-          </div>
+          </div> */}
           </form>
           <div>
           <Alert
