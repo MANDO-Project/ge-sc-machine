@@ -16,7 +16,7 @@ import {encode as base64_encode} from 'base-64';
 import sample0 from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol';
 
 
-import Select from 'react-select'; 
+import Select from 'react-select';
 import x from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol'
 import y from "./smart_contracts/simple_dao.sol"
 import z from "./smart_contracts/buggy_1.sol"
@@ -360,11 +360,11 @@ class App extends Component {
           },
         ]
         let seriesArea = [
-          {name: 'Graph Runtime',
+          {name: 'Coarse-Grained Detection Runtime',
            type: 'line',
            data: []
           },
-          {name: 'Node Runtime',
+          {name: 'Fine-Grained Detection Runtime',
            type: 'line',
            data: []
           }

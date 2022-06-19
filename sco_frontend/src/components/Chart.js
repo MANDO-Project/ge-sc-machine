@@ -56,7 +56,7 @@ class StackedChart extends Component {
               show: true,
             },
             title: {
-              text: "Nodes"
+              text: "Number of Nodes"
             },
             label:{
               maxWidth: 100
@@ -80,6 +80,9 @@ class StackedChart extends Component {
         }
       },
       areaOpt:{
+        title: {
+          text: 'Detection Time'
+        },
           chart: {
           height: 350,
           type: 'area'
@@ -107,7 +110,7 @@ class StackedChart extends Component {
         yaxis: [
           {
             opposite: false,
-            seriesName: 'GRAPH RUNTIME',
+            seriesName: 'Coarse-Grained Detection Runtime',
             axisTicks: {
               show: true
             },
@@ -121,7 +124,7 @@ class StackedChart extends Component {
           },
           {
             opposite: false,
-            seriesName: 'NODE RUNTIME',
+            seriesName: 'Fine-Grained Detection Runtime',
             show: false,
             axisTicks: {
               show: false
@@ -184,7 +187,7 @@ class StackedChart extends Component {
     else if(this.props.showGraphCheck&&!this.props.showBarChart){
       return (
         <button className="showChart" onClick={this.props.Click}>
-                        Show Bar Chart
+                        Show Statistics
         </button>
       );
     }

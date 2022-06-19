@@ -28,7 +28,7 @@ export default class  Detail_error extends Component{
                           style.backgroundColor = "#ffe7a4";
                       }
                       if(this.props.ClickNode.includes(lineNumber)){
-                        style.border = "px solid red";
+                        style.border = "4px solid red";
                       }
                       return { style };
                   }}>
@@ -43,11 +43,11 @@ export default class  Detail_error extends Component{
             <div className='Lenged'>
               <div className='Code_Lenged'>
                 <div className='note'><span id='yellow' ></span> Error Code Line</div> 
-                <div className='note'><span id='red_border' ></span> Code Line of Clicked Node </div> 
+                <div className='note'><span id='red_border' ></span> Code Line of Selected Node </div> 
               </div>
               <div className='Graph_Lenged'>
-                <div className='note'><span id='red' ></span> Bug</div> 
-                <div className='note'><span id='white' ></span> Clean</div> 
+                <div className='note'><span id='red' ></span> Bug Node</div> 
+                <div className='note'><span id='white' ></span> Clean Node</div> 
               </div>
             </div>
           </div>
