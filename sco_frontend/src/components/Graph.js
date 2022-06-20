@@ -3,7 +3,7 @@ import { ForceGraph2D} from 'react-force-graph';
 import "./graph.css";
 export default class Graph extends PureComponent{
     shouldComponentUpdate(nextProps) {
-        if (this.props.ClickNode === nextProps.ClickNode) {
+        if (this.props.ClickNode === nextProps.ClickNode && this.props.graph!=null) {
             console.log("graph-reload")
             return true;
         }
@@ -51,26 +51,28 @@ export default class Graph extends PureComponent{
         return(
             <div onLoad={draw_red_circle}>
                 <div className='comment'>
-                <div className='line'>
-                    <div className='col' ><span id='entrypoint' ></span>  Entry_point</div> 
-                    <div className='col' ><span id='new_var' ></span>New_var</div>  
-                    <div className='col' ><span id='expression' ></span>  Expression</div>   
-                    <div className='col' ><span id='if' ></span>  If</div>  
-                    <div className='col' ><span id='endif' ></span> EndIf</div>  
+                <div className='line_6'>
+                    <div className='col_6' ><span id='bg_loop' ></span>  BG Loop  </div>  
+                    <div className='col_6' ><span id='other' ></span>  Other</div>  
+                    <div className='col_6' ><span id='throw' ></span>  Throw</div>   
+                    <div className='col_6' ><span id='new_var' ></span>New_var</div>   
+                    <div className='col_6' ><span id='return' ></span>  Return</div>
+                    <div className='col_6' ><span id='if' ></span>  If</div>  
                 </div>
-                <div className='line'>
-                    <div className='col' ><span id='bg_loop' ></span>  BG Loop  </div>  
-                    <div className='col' ><span id='other' ></span>  Other</div>  
-                    <div className='col' ><span id='throw' ></span>  Throw</div>   
-                    <div className='col' ><span id='continue' ></span>  Continue</div>  
-                    <div className='col' ><span id='return' ></span>  Return</div>  
+                <div className='line_6'>
+                    <div className='col_6' ><span id='inline' ></span>  Inline ASM</div> 
+                    <div className='col_6' ><span id='func' ></span>  Func</div> 
+                    <div className='col_6' ><span id='end_loop' ></span>  End Loop</div>   
+                    <div className='col_6' ><span id='ifloop' ></span>  If Loop</div> 
+                    <div className='col_6' ><span id='_' ></span>  _</div>  
+                    <div className='col_6' ><span id='endif' ></span> EndIf</div>
                 </div>
-                <div className='line'>
-                    <div className='col' ><span id='inline' ></span>  Inline ASM</div> 
-                    <div className='col' ><span id='func' ></span>  Func</div> 
-                    <div className='col' ><span id='end_loop' ></span>  End Loop</div>   
-                    <div className='col' ><span id='ifloop' ></span>  If Loop</div> 
-                    <div className='col' ><span id='_' ></span>  _</div>  
+                <div className='line_5'>
+                    <div className='col_5_1' ><span id='entrypoint' ></span>  Entry_point</div>
+                    <div className='col_5_1' ><span id='continue' ></span>  Continue</div>   
+                    <div className='col_5_1' ><span id='expression' ></span>  Expression</div>   
+                    <div className='col_5_2' ><span id='fallback_func' ></span>  Fallback_Func</div>  
+                    <div className='col_5_2' ><span id='contract_func' ></span> Contract_Func</div>  
                 </div>
                 </div>
                 <ForceGraph2D graphData={myGraph} 
@@ -81,12 +83,7 @@ export default class Graph extends PureComponent{
                 linkDirectionalParticles={4}
                 nodeLabel={node=>myGraph.nodes[node.id].name}
                 onNodeClick={handleClick}
-                
                 />
-            <div className='line_note'>
-                <div className='note' ><span id='red' ></span> Bug</div> 
-                <div className='note' ><span id='white' ></span> Clean</div> 
-            </div>
             </div>
            
         )

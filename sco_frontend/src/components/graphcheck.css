@@ -1,0 +1,217 @@
+.Access_control_green{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      background-color:rgba(6, 240, 96, 0.842);
+      border-radius: 3px;
+      margin: 10px 40px 20px 0px;
+  }
+  .Arithmetic_green{
+    display:inline-block;
+      width: 110px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin: 10px 40px 20px 0px;
+      background-color:rgba(6, 240, 96, 0.842);
+  }
+  .Denial_of_service_green{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      background-color:#ADD8E6;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin: 10px 40px 20px 0px;
+      background-color:rgba(6, 240, 96, 0.842);
+  }
+  .Front_running_green{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(6, 240, 96, 0.842);
+  }
+  .Reentrancy_green{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(6, 240, 96, 0.842);
+  }
+  .Time_manipulation_green{
+    display:inline-block;
+    width: 140px;
+    height:30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+     margin: 10px 40px 20px 0px;
+    background-color:rgba(6, 240, 96, 0.842);
+    
+  }
+  .Unchecked_low_level_calls_green{
+    display:inline-block;
+    width: 200px;
+    height:30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 10px,20px,0px,20px;
+    background-color:rgba(6, 240, 96, 0.842);
+
+  }
+  .Access_control_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Arithmetic_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Denial_of_service_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Front_running_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Reentrancy_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Time_manipulation_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Unchecked_low_level_calls_green:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+
+  .Access_control_red{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      background-color:rgba(214, 12, 39, 0.671);
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+  }
+  .Arithmetic_red{
+    display:inline-block;
+      width: 110px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(214, 12, 39, 0.671);
+  }
+  .Denial_of_service_red{
+    display:inline-block;
+      width: 130px;
+      height:30px;
+      background-color:#ADD8E6;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(214, 12, 39, 0.671);
+  }
+  .Front_running_red{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(214, 12, 39, 0.671);
+  }
+  .Reentrancy_red{
+    display:inline-block;
+      width: 120px;
+      height:30px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+       margin: 10px 40px 20px 0px;
+      background-color:rgba(214, 12, 39, 0.671);
+  }
+  .Time_manipulation_red{
+    display:inline-block;
+    width: 140px;
+    height:30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 10px 40px 20px 0px;
+    background-color:rgba(214, 12, 39, 0.671);
+    
+  }
+  .Unchecked_low_level_calls_red{
+    display:inline-block;
+    width: 200px;
+    height:30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 10px 0px 20px 0px;
+    background-color:rgba(214, 12, 39, 0.671);
+
+  }
+  .Access_control_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Arithmetic_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Denial_of_service_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Front_running_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Reentrancy_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Time_manipulation_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+  .Unchecked_low_level_calls_red:hover{
+    background-image: linear-gradient(#ffffff, #d5d5d5 );
+    color: black;
+  }
+
+#red_legend{
+    display:inline-block;
+    width: 50px;
+    height: 15px;
+    text-align: center;
+    background-color:rgba(214, 12, 39, 0.671);
+    border: 1px solid #ccc;
+    border-radius: 3px;
+   
+}
+#green_legend{
+    display:inline-block;
+    width: 50px;
+    height: 15px;
+    text-align: center;
+    background-color:rgba(6, 240, 96, 0.842);
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+.legend_button{
+    grid-template-columns: 50%,50%;
+}
+.note{
+    display:inline-block;
+    width: 50%;
+    text-align: center;
+}
