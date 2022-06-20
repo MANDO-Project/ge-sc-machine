@@ -76,41 +76,46 @@ def get_color_node(graph,source_files):
     color_node=[]
     nodeTypes=['ENTRY_POINT', 'NEW VARIABLE', 'EXPRESSION', 'IF', 'END_IF',
     'FUNCTION_NAME', 'OTHER_ENTRYPOINT', 'THROW', '_', 'RETURN', 'INLINE ASM',
-     'BEGIN_LOOP', 'END_LOOP', 'IF_LOOP', 'CONTINUE']
+     'BEGIN_LOOP', 'END_LOOP', 'IF_LOOP', 'CONTINUE','CONTRACT_FUNCTION','FALLBACK_FUNCTION']
     for node_ids,node_data in graph.nodes(data=True):
         filename=node_data['source_file']
         type=node_data['node_type']
         if filename in source_files:
             if type==nodeTypes[0]:
-               color_node.append('#CD5C5C')
+               color_node.append('#0E38E3')
             elif type==nodeTypes[1]:
-               color_node.append('#FFB6C1')
+               color_node.append('#1c71c7')
             elif type==nodeTypes[2]:
-                color_node.append('#FF8C00')
+                color_node.append('#2AAAAA')
             elif type==nodeTypes[3]:
-                color_node.append('#FFFF00')
+                color_node.append('#38E38E')
             elif type==nodeTypes[4]:
-                color_node.append('#DDA0DD')
+                color_node.append('#471C71')
             elif type==nodeTypes[5]:
-                color_node.append('#DA70D6')
+                color_node.append('#555555')
             elif type==nodeTypes[6]:
-                color_node.append('#8B008B')
+                color_node.append('#638E38')
             elif type==nodeTypes[7]:
-                color_node.append('#6A5ACD')
+                color_node.append('#71C71C')
             elif type==nodeTypes[8]:
-                color_node.append('#7FFF00')
+                color_node.append('#7FFFFF')
             elif type==nodeTypes[9]:
-                color_node.append('#00FF7F')
+                color_node.append('#8E38E3')
             elif type==nodeTypes[10]:
-                color_node.append('#6B8E23')
+                color_node.append('#9C71C6')
             elif type==nodeTypes[11]:
-                color_node.append('#008080')
+                color_node.append('#AAAAAA')
             elif type==nodeTypes[12]:
-                color_node.append('#ADD8E6')
+                color_node.append('#B8E38D')
             elif type==nodeTypes[13]:
-                color_node.append('#5F9EA0')
+                color_node.append('#C71C71')
             elif type==nodeTypes[14]:
-                color_node.append('#150517')
+                color_node.append('#D5554D')
+            elif type==nodeTypes[15]:
+                color_node.append('#E38E30')
+            elif type==nodeTypes[16]:
+                color_node.append('#F1C713')
+            
             else: 
                 color_node.append('#000000')       
     return color_node
