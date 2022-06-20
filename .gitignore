@@ -20,3 +20,5 @@ data/
 models/
 results/
 build/
+yarn.lock
+package-lock.json
