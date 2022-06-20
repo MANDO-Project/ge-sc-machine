@@ -2,7 +2,7 @@
 
 ## This project was created to bring out the APIs of vulnerability detection for smart contracts.
 
-## Doploy Local
+## Deploy MANDO-GURU tool in a local machine
 
 ### Backend
 
