@@ -163,7 +163,8 @@ class App extends Component {
     onSubmit = () => {
       //connect graph backend
       this.setState({isLoading: true})
-      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      // let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      let report_api='http://mandoguru.com/v1.0.0/vulnerability/detection/nodetype'
       const reportRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',
@@ -423,14 +424,17 @@ class App extends Component {
         <div className='App'>
           <div className='top'>
           <div id='github'>
-            <GithubCorner href='https://github.com/CIKM-2021/hive-db' direction='left'/>
+            <GithubCorner href='https://github.com/MANDO-Project/ge-sc-machine' direction='left'/>
           </div>
-            <h1>🏁 Smart Contract Vulnerability Detection - SCO Demo</h1>
-            <a href="https://github.com/erichoang/ge-sc">
+            <h1>🏁 Smart Contract Vulnerability Detection - Mando Guru tool</h1>
+            <a href="https://github.com/MANDO-Project/ge-sc-machine">
               More details
             </a>
             <p>
               This is the quick vulnerability detection demo for <em>7 types of bug</em> in smart contract.
+            </p>
+            <p>
+              You can upload a solidity smart contract from local or select an available one in the drop-down box.
             </p>
           </div>
           <form onSubmit={this.handleSubmit} id="form">

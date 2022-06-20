@@ -42,7 +42,7 @@ export default class  Detail_error extends Component{
             </div>
             <div className='Lenged'>
               <div className='Code_Lenged'>
-                <div className='note'><span id='yellow' ></span> Error Code Line</div> 
+                <div className='note'><span id='yellow' ></span> Buggy Code Line</div> 
                 <div className='note'><span id='red_border' ></span> Code Line of Selected Node </div> 
               </div>
               <div className='Graph_Lenged'>
