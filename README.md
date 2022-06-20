@@ -1,3 +1,3 @@
-# SCO backend service
+# MANDO-GURU backend services
 
-## This project was born to bring out the api of vulnerability detection for smart contracts.
+## This project was created to bring out the APIs of vulnerability detection for smart contracts.
