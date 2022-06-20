@@ -1,4 +1,4 @@
-# MANDO-GURU backend services
+# MANDO-GURU services
 
 ## This project was created to bring out the APIs of vulnerability detection for smart contracts.
 
