@@ -11,16 +11,22 @@ diction results and the statistics of the analyzed smart contracts
 - RESTful APIs are implemented as a bridge to communicate between the Backend and the Frontend
 # Table of contents
 - [MANDO-GURU services](#mando-guru-services)
+    - [This project was created to bring out the APIs of vulnerability detection for smart contracts.](#this-project-was-created-to-bring-out-the-apis-of-vulnerability-detection-for-smart-contracts)
 - [Overview](#overview)
+      - [The MANDO-GURU tool with three main components: Backend, RESTful APIs, and Frontend.](#the-mando-guru-tool-with-three-main-components-backend-restful-apis-and-frontend)
 - [Table of contents](#table-of-contents)
-- [Deploy MANDO-GURU services in a local machine](#deploy-mando-guru-services-in-a-local-machine)
+  - [Deploy MANDO-GURU services in a local machine](#deploy-mando-guru-services-in-a-local-machine)
     - [Backend](#backend)
     - [Frontend](#frontend)
 - [How to use the tool?](#how-to-use-the-tool)
-    - [On submit smart contract](#on-submit-smart-contract)
-    - [On click Button Detail Of Error](#on-click-button-detail-of-error)
-    - [On Click Node](#on-click-node)
-    - [Show Statistics](#show-statistics)
+  - [On submit smart contract](#on-submit-smart-contract)
+  - [On click Button Detail Of Error](#on-click-button-detail-of-error)
+    - [The tool shows the source code and graph of the smart contract](#the-tool-shows-the-source-code-and-graph-of-the-smart-contract)
+  - [On Click Node](#on-click-node)
+  - [Show Statistics](#show-statistics)
+  - [Doploy Local](#doploy-local)
+    - [Backend](#backend-1)
+    - [Frontend](#frontend-1)
 ## Deploy MANDO-GURU services in a local machine
 
 ### Backend
@@ -80,16 +86,29 @@ DetectionTime for each type of bug.
 - Bug Density
 ![GE-SC overview](./assets/BugDensity.png)
 
+## Doploy Local
+
+### Backend
 
 
+```
+docker pull nguyenminh1807/sco:latest
+```
 
+```
+docker run -it -d --rm  --name sco_app -p 5555:5555 nguyenminh1807/sco:latest
+```
 
- 
+### Frontend
 
+```
+cd sco_frontend
+```
 
+```
+yarn
+```
 
-
-
-
-
-
+```
+yarn build
+```
