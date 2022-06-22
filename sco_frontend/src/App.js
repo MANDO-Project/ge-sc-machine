@@ -163,8 +163,8 @@ class App extends Component {
     onSubmit = () => {
       //connect graph backend
       this.setState({isLoading: true})
-      // let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
-      let report_api='http://mandoguru.com/v1.0.0/vulnerability/detection/nodetype'
+      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      // let report_api='http://mandoguru.com/v1.0.0/vulnerability/detection/nodetype'
       const reportRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',
@@ -427,11 +427,14 @@ class App extends Component {
             <GithubCorner href='https://github.com/MANDO-Project/ge-sc-machine' direction='left'/>
           </div>
             <h1>🏁 Smart Contract Vulnerability Detection - Mando Guru tool</h1>
-            <a href="https://github.com/MANDO-Project/ge-sc-machine">
-              More details
+            <a href="http://mandoguru.com/demo-video">
+              Demo video
             </a>
             <p>
-              This is the quick vulnerability detection demo for <em>7 types of bug</em> in smart contract.
+              This is the quick vulnerability detection demo for <em>7 types of bug</em> in smart contract. 
+            </p>
+            <p>
+              Due to limits of computation resources, the scanning process might take 1-2 minutes to get the results, depending on the complexity of the input source file. We recommend users use the Chrome browser for the best experience.
             </p>
             <p>
               You can upload a solidity smart contract from local or select an available one in the drop-down box.
