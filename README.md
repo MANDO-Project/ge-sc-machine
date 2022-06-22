@@ -1,4 +1,4 @@
-# MANDO-GURU backend services
+# MANDO-GURU services
 
 ## This project was created to bring out the APIs of vulnerability detection for smart contracts.
 
@@ -23,9 +23,9 @@ This project was created to bring out the APIs of vulnerability detection for sm
 - RESTful APIs are implemented as a bridge to communicate between the Backend and the Frontend.
 
 # Table of contents
-- [MANDO-GURU backend services](#mando-guru-backend-services)
-  - [This project was created to bring out the APIs of vulnerability detection for smart contracts.](#this-project-was-created-to-bring-out-the-apis-of-vulnerability-detection-for-smart-contracts)
 - [MANDO-GURU services](#mando-guru-services)
+  - [This project was created to bring out the APIs of vulnerability detection for smart contracts.](#this-project-was-created-to-bring-out-the-apis-of-vulnerability-detection-for-smart-contracts)
+- [MANDO-GURU services](#mando-guru-services-1)
 - [Overview](#overview)
   - [The MANDO-GURU tool with three main components: Backend, RESTful APIs, and Frontend.](#the-mando-guru-tool-with-three-main-components-backend-restful-apis-and-frontend)
 - [Table of contents](#table-of-contents)
