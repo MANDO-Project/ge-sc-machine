@@ -1,9 +1,4 @@
 # MANDO-GURU services
-
-## This project was created to bring out the APIs of vulnerability detection for smart contracts.
-
-
-# MANDO-GURU services
 <p>
     <a href="https://www.python.org/" target="blank_"><img alt="python" src="https://img.shields.io/badge/python-3.8.9-green" /></a>
     <a href="https://fastapi.tiangolo.com/" target="blank_"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.78.0-yellowgreen" /></a>
@@ -17,17 +12,22 @@
 
 This project was created to bring out the APIs of vulnerability detection for smart contracts.
 
-## The MANDO-GURU tool with three main components: Backend, RESTful APIs, and Frontend.
+## Components
+### Backend
 - Backend plays a vital role with several core sub-components such as heterogeneous presentation for the generated graphs from input smart contract files, heterogeneous graph fusion, custom multi-metapaths extraction, heterogeneous graph neural network, and vulnerability detections in coarse-grained and fine-grained levels.
+### Frontend
 - Frontend component services are used to visualize the prediction results and the statistics of the analyzed smart contracts.
+
+### RESTful APIs
 - RESTful APIs are implemented as a bridge to communicate between the Backend and the Frontend.
 
 # Table of contents
 - [MANDO-GURU services](#mando-guru-services)
-  - [This project was created to bring out the APIs of vulnerability detection for smart contracts.](#this-project-was-created-to-bring-out-the-apis-of-vulnerability-detection-for-smart-contracts)
-- [MANDO-GURU services](#mando-guru-services-1)
 - [Overview](#overview)
-  - [The MANDO-GURU tool with three main components: Backend, RESTful APIs, and Frontend.](#the-mando-guru-tool-with-three-main-components-backend-restful-apis-and-frontend)
+  - [Components](#components)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [RESTful APIs](#restful-apis)
 - [Table of contents](#table-of-contents)
 - [How to use the tool?](#how-to-use-the-tool)
   - [Coaser-Grained Detection](#coaser-grained-detection)
@@ -37,9 +37,9 @@ This project was created to bring out the APIs of vulnerability detection for sm
 - [Deployment](#deployment)
   - [Prerequisites](#prerequisites)
   - [Doploy Local](#doploy-local)
-    - [Backend](#backend)
-  - [Backend](#backend-1)
-  - [Frontend](#frontend)
+    - [Backend](#backend-1)
+  - [Backend](#backend-2)
+  - [Frontend](#frontend-1)
 
 # How to use the tool?
 ## Coaser-Grained Detection
