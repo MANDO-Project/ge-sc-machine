@@ -83,7 +83,7 @@ Please visit this link to see the [demo video](http://mandoguru.com/demo-video).
 - [node](https://nodejs.org/en/download/) 16.15.1 or higher
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 8.11.0 or higher
 
-## Doploy Local
+## Deploy on Local Machine
 
 ### Backend
 
