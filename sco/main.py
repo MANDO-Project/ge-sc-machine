@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from .api.common import app
 from .api.views import line_level_bug
 from .api.views import contract_level_bug
+from .api.views import summerize_reports
 from .config import settings
 
 
@@ -50,7 +51,7 @@ async def redoc_html():
 
 app.include_router(line_level_bug.router, prefix=settings.PREFIX)
 app.include_router(contract_level_bug.router, prefix=settings.PREFIX)
-
+app.include_router(summerize_reports.router, prefix=settings.PREFIX)
 
 # Additional yaml version of openapi.json
 # Ref: https://github.com/tiangolo/fastapi/issues/1140#issuecomment-659469034
