@@ -30,13 +30,15 @@ This project was created to bring out the APIs of vulnerability detection for sm
     - [RESTful APIs](#restful-apis)
 - [Table of contents](#table-of-contents)
 - [How to use the tool?](#how-to-use-the-tool)
-  - [Coaser-Grained Detection](#coaser-grained-detection)
+  - [Coarse-Grained Detection](#coarse-grained-detection)
   - [Fine-Grained Detection](#fine-grained-detection)
   - [Statistics](#statistics)
+  - [MandoGuru APIs](#mandoguru-apis)
+  - [MandoGuru APIs' Token](#mandoguru-apis-token)
   - [Demo Video](#demo-video)
 - [Deployment](#deployment)
   - [Prerequisites](#prerequisites)
-  - [Doploy Local](#doploy-local)
+  - [Deploy on Local Machine](#deploy-on-local-machine)
     - [Backend](#backend-1)
   - [Backend](#backend-2)
   - [Frontend](#frontend-1)
@@ -72,6 +74,23 @@ This project was created to bring out the APIs of vulnerability detection for sm
 ![GE-SC overview](./assets/BugDensity.png)
   - We divided the line number which had bugs into 15 categories in order.
   - The portion with darker color shows that the areas of source code have more bug lines.
+
+
+## MandoGuru APIs
+- APIs documents: [mandoguru.com/docs](mandoguru.com/docs)
+- We also published APIs documents for user can directly request to MandoGuru services.
+- There are 2 main APIs:
+  - Coarse-grained detection.
+  - Fine-grained detection.
+- The document page were built based on [Swagger](https://swagger.io/tools/swagger-ui/) which help you request directly.
+- When making a request, **you have to authorize by [the public token](#mandoguru-apis-token) fisrt.**
+- To call an API step by step, please refer to [demo video](http://mandoguru.com/demo-video).
+
+## MandoGuru APIs' Token
+```
+MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0
+```
+
 ## Demo Video
 Please visit this link to see the [demo video](http://mandoguru.com/demo-video).
 
