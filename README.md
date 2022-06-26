@@ -77,7 +77,7 @@ This project was created to bring out the APIs of vulnerability detection for sm
 
 
 ## MandoGuru APIs
-- APIs documents: [mandoguru.com/docs](mandoguru.com/docs)
+- APIs documents: [mandoguru.com/docs](www.mandoguru.com/docs)
 - We also published APIs documents for user can directly request to MandoGuru services.
 - There are 2 main APIs:
   - Coarse-grained detection.
