@@ -42,7 +42,7 @@ This project was created to bring out the APIs of vulnerability detection for sm
   - [Frontend](#frontend-1)
 
 # How to use the tool?
-## Coaser-Grained Detection
+## Coarse-Grained Detection
 ![GE-SC overview](./assets/onClickDetail.png)
 - You can upload a solidity smart contract from local or select an available one in the drop-down box.
 - We supported 7 kind of bugs. Due to limits of computation resources, the scanning process might take 1-2 minutes to get the results, depending on the complexity of the input source file. We recommend users use the Chrome browser for the best experience.
@@ -83,7 +83,7 @@ Please visit this link to see the [demo video](http://mandoguru.com/demo-video).
 - [node](https://nodejs.org/en/download/) 16.15.1 or higher
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 8.11.0 or higher
 
-## Doploy Local
+## Deploy on Local Machine
 
 ### Backend
 
