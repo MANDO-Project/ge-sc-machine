@@ -14,3 +14,10 @@ class BugType(str, Enum):
 class NodeFeature(str, Enum):
     NODE_TYPE = 'nodetype'
     METAPATH2VEC = 'metapath2vec'
+
+
+class Message(str, Enum):
+    ILLEGAL_CONTRACT = 'Found a illegal solidity smart contract'
+    STRANGE_GRAPH = 'Found non-existent nodes/edges in the graph'
+    UNSUPPORTED = 'Bug type is unsupported'
+    OK = 'Successful'
