@@ -39,8 +39,8 @@ This project was created to bring out the APIs of vulnerability detection for sm
 - [Deployment](#deployment)
   - [Prerequisites](#prerequisites)
   - [Deploy on Local Machine](#deploy-on-local-machine)
-  - [Backend](#backend-1)
-  - [Frontend](#frontend-1)
+    - [Backend](#backend-1)
+    - [Frontend](#frontend-1)
 
 # How to use the tool?
 ## Coarse-Grained Detection
