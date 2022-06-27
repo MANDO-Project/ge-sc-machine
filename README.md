@@ -39,7 +39,6 @@ This project was created to bring out the APIs of vulnerability detection for sm
 - [Deployment](#deployment)
   - [Prerequisites](#prerequisites)
   - [Deploy on Local Machine](#deploy-on-local-machine)
-    - [Backend](#backend-1)
   - [Backend](#backend-2)
   - [Frontend](#frontend-1)
 
@@ -103,8 +102,6 @@ Please visit this link to see the [demo video](http://mandoguru.com/demo-video).
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) 8.11.0 or higher
 
 ## Deploy on Local Machine
-
-### Backend
 
 ## Backend
 - We published docker image for launching backend service.
