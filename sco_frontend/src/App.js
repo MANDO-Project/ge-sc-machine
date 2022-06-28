@@ -430,6 +430,9 @@ class App extends Component {
             <a href="http://mandoguru.com/demo-video">
               Demo video
             </a>
+            <a href="http://mandoguru.com/docs">
+              APIs document
+            </a>
             <p>
               This is the quick vulnerability detection demo for <em>7 types of bug</em> in smart contract. 
             </p>
