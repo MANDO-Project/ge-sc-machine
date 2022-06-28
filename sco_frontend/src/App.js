@@ -190,56 +190,6 @@ class App extends Component {
       })
     }
 
-    onClickSample = (event) => {
-      // this.setState({ selectedFile: event.target.files[0] })
-      this.setState({ClickNode:[]})
-      this.setState({showBarChart:false,showHeatMap:false,showDetailCode:false,showGraphCheck:false})
-      let encoded = null
-      fetch(sample0)
-      .then(r => r.text())
-      .then(text => {
-        encoded = base64_encode(text);
-        this.setState({base64String:encoded})
-      });
-
-      this.setState({isLoading: true})
-      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
-      const reportRequestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                    'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:encoded})
-      }
-      fetch(report_api, reportRequestOptions)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({detectReports:data})
-        this.setState({newSubmit: true})
-        // console.log('request: ', this.newSubmit)
-        this.setState({isLoading: false})
-      })
-    }
-
-    onSample1 = () => {
-      //connect graph backend
-      this.setState({isLoading: true})
-      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
-      const reportRequestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                    'key': 'MqQVfJ6Fq1umZnUI7ZuaycciCjxi3gM0'},
-        body: JSON.stringify({smart_contract:this.state.base64String})
-      }
-      fetch(report_api, reportRequestOptions)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({newSubmit: true})
-        this.setState({detectReports:data})
-        // console.log('request: ', this.newSubmit)
-        this.setState({isLoading: false})
-      })
-    }
-
     //Detail Button
     onClickDetail_Access_control = event =>{
       this.setState({detectResults:this.state.detectReports['summaries'][BugIds.access_control]})
@@ -465,12 +415,6 @@ class App extends Component {
                 </DarkBackground>
           </div>
           <hr/>
-          {/* <div>
-            <button className="Button" type="submit" onClick={this.onClickSample}> 0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol</button>
-            <button className="Button" type="submit" onClick={this.onClickSample}> simple_dao.sol</button>
-            <button className="Button" type="submit" onClick={this.onClickSample}> multiowned_vulnerable.sol</button>
-            <button className="Button" type="submit" onClick={this.onClickSample}> buggy_1.sol</button>
-          </div> */}
           </form>
           <div>
           <Alert
