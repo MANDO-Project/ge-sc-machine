@@ -40,8 +40,7 @@ This project was created to bring out the APIs of vulnerability detection for sm
   - [Prerequisites](#prerequisites)
   - [Deploy on Local Machine](#deploy-on-local-machine)
     - [Backend](#backend-1)
-  - [Backend](#backend-2)
-  - [Frontend](#frontend-1)
+    - [Frontend](#frontend-1)
 
 # How to use the tool?
 ## Coarse-Grained Detection
@@ -105,8 +104,6 @@ Please visit this link to see the [demo video](http://mandoguru.com/demo-video).
 ## Deploy on Local Machine
 
 ### Backend
-
-## Backend
 - We published docker image for launching backend service.
 
 - Pull docker image from docker hub.
@@ -119,7 +116,7 @@ docker pull nguyenminh1807/sco:latest
 docker run -it -d --rm  --name sco_app -p 5555:5555 nguyenminh1807/sco:latest
 ```
 
-## Frontend
+### Frontend
 - You need to navigate to frontend directory first.
 ```
 cd sco_frontend
