@@ -7,19 +7,12 @@ import GithubCorner from 'react-github-corner'
 import LoadingOverlay from 'react-loading-overlay';
 import Alert from 'react-popup-alert'
 import styled, { css } from "styled-components";
-// import { useAlert } from "react-alert";
-
-
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
-import {encode as base64_encode} from 'base-64';
-import sample0 from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol';
-
 
 import Select from 'react-select';
 import x from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol'
 import y from "./smart_contracts/simple_dao.sol"
 import z from "./smart_contracts/buggy_1.sol"
+
 
 const BugIds = {
   access_control: 0,
