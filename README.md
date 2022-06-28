@@ -122,9 +122,9 @@ docker run -it -d --rm  --name sco_app -p 5555:5555 nguyenminh1807/sco:latest
 cd sco_frontend
 ```
 
-- Install required package.
+- Install required package with legacy peer dependencies option.
 ```
-npm install
+npm install --legacy-peer-deps
 ```
 
 - Launch app from local.
