@@ -156,8 +156,8 @@ class App extends Component {
     onSubmit = () => {
       //connect graph backend
       this.setState({isLoading: true})
-      // let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
-      let report_api='http://mandoguru.com/v1.0.0/vulnerability/detection/nodetype'
+      let report_api='http://localhost:5555/v1.0.0/vulnerability/detection/nodetype'
+      // let report_api='http://mandoguru.com/v1.0.0/vulnerability/detection/nodetype'
       const reportRequestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',
