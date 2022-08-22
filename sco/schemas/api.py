@@ -38,7 +38,7 @@ class FailedCase(BaseModel):
 
 class FineGrainedDetectReponse(BaseModel):
     id: UUID = uuid4()
-    smart_contract_length: int
+    smart_contract_length: int = None
     message: Message = None
     bug_type: BugType = None
     runtime: int = None

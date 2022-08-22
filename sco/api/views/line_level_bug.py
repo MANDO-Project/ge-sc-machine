@@ -61,14 +61,17 @@ async def fine_graind_detection(data: ContractRequest,
     line_numbers = get_line_numbers(extra_graph, [sm_name])
     file_edges=get_edges(extra_graph, [sm_name],file_ids)
     node_type=get_node_type(extra_graph, [sm_name])
+    logger.info('Incoming graph {}'.format(cfg_cg_graph))
+    logger.info('Merged graph {}'.format(extra_graph))
     # Inference
+    logits, _ = node_classifier.extend_forward(extra_graph)
     begin_time = time()
     try:
         with torch.no_grad():
             logits, _ = node_classifier.extend_forward(extra_graph)
     except Exception as e:
         logger.info(e)
-        return FineGrainedDetectReponse.parse_obj({'messages': Message.STRANGE_GRAPH})
+        return FineGrainedDetectReponse.parse_obj({'message': Message.STRANGE_GRAPH})
     file_mask = get_binary_mask(len(extra_graph), file_ids)
     preds = logits[file_mask]
     preds = nn.functional.softmax(preds, dim=1)
@@ -95,4 +98,3 @@ async def fine_graind_detection(data: ContractRequest,
     bug_report['message'] = Message.OK
     logger.info(bug_report)
     return bug_report
-
