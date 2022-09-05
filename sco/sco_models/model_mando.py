@@ -1,5 +1,8 @@
 
+from cProfile import label
+import json
 import dgl
+from sklearn.semi_supervised import SelfTrainingClassifier
 import torch
 import networkx as nx
 import torch.nn as nn
@@ -14,9 +17,8 @@ from .graph_utils import add_hetero_ids, \
                          map_node_embedding, get_symmatrical_metapaths, \
                          get_length_2_metapath, \
                          reflect_graph, get_node_ids_by_filename, \
-                         generate_random_node_features, generate_zeros_node_features
-
-
+                         generate_random_node_features, generate_zeros_node_features, \
+                         generate_filename_ids, get_node_tracker
 class SemanticAttention(nn.Module):
     def __init__(self, in_size, hidden_size=128):
         super(SemanticAttention, self).__init__()
@@ -126,7 +128,10 @@ class MANDONodeClassifier(nn.Module):
                 self.full_metapath[ntype] = [metapath]
             else:
                 self.full_metapath[ntype].append(metapath)
+        # print(len(set([meta_path[0][0] for meta_path in self.meta_paths])))
+        # print(len(self.symmetrical_global_graph.ntypes))
         self.node_types = set([meta_path[0][0] for meta_path in self.meta_paths])
+        # self.node_types = self.symmetrical_global_graph.ntypes
         self.ntypes_dict = {k: v for v, k in enumerate(self.node_types)}
 
         self.node_feature = node_feature
@@ -248,6 +253,8 @@ class MANDOGraphClassifier(nn.Module):
         # Get Global graph
         nx_graph = load_hetero_nx_graph(compressed_global_graph_path)
         self.nx_graph = nx_graph
+        self.filename_mapping = generate_filename_ids(nx_graph)
+        _node_tracker = get_node_tracker(nx_graph, self.filename_mapping)
         nx_g_data = generate_hetero_graph_data(nx_graph)
         self.total_nodes = len(nx_graph)
 
@@ -259,6 +266,7 @@ class MANDOGraphClassifier(nn.Module):
         self.symmetrical_global_graph_data = reflect_graph(nx_g_data)
         self.number_of_nodes = get_number_of_nodes(nx_graph)
         self.symmetrical_global_graph = dgl.heterograph(self.symmetrical_global_graph_data, num_nodes_dict=self.number_of_nodes)
+        self.symmetrical_global_graph.ndata['filename'] = _node_tracker
         # self.meta_paths = get_symmatrical_metapaths(self.symmetrical_global_graph)
         self.meta_paths = get_length_2_metapath(self.symmetrical_global_graph)
         # self.meta_paths = load_meta_paths('./metapath_length_2.txt')
@@ -271,6 +279,8 @@ class MANDOGraphClassifier(nn.Module):
             else:
                 self.full_metapath[ntype].append(metapath)
         self.node_types = set([meta_path[0][0] for meta_path in self.meta_paths])
+        self.node_types = self.symmetrical_global_graph.ntypes
+        self.edge_types = self.symmetrical_global_graph.etypes
         self.ntypes_dict = {k: v for v, k in enumerate(self.node_types)}
 
         self.node_feature = node_feature
@@ -326,14 +336,23 @@ class MANDOGraphClassifier(nn.Module):
             if hasattr(layer, 'reset_parameters'):
                     layer.reset_parameters()
 
-    def forward(self):
+    def forward(self, batched_g_name, save_featrues=None):
         features = self.get_assemble_node_features()
-        hiddens = torch.zeros((self.symmetrical_global_graph.number_of_nodes(), self.last_hidden_size), device=self.device)
-        for ntype, feature in features.items():
-            assert len(self.node_ids_dict[ntype]) == feature.shape[0]
-            hiddens[self.node_ids_dict[ntype]] = feature
-        output = self.classify(hiddens)
-        return output
+        batched_graph_embedded = []
+        for g_name in batched_g_name:
+            file_ids = self.filename_mapping[g_name]
+            graph_embedded = 0
+            for node_type in self.node_types:
+                file_mask = self.symmetrical_global_graph.ndata['filename'][node_type] == file_ids
+                if file_mask.sum().item() != 0:
+                    graph_embedded += features[node_type][file_mask].mean(0)
+            # if not isinstance(graph_embedded, int):
+            batched_graph_embedded.append(graph_embedded.tolist())
+        batched_graph_embedded = torch.tensor(batched_graph_embedded).to(self.device)
+        if save_featrues:
+            torch.save(batched_graph_embedded, save_featrues)
+        output = self.classify(batched_graph_embedded)
+        return output, batched_graph_embedded
 
     def extend_forward(self, new_graph, new_contracts):
         nx_graph = new_graph
@@ -381,9 +400,140 @@ class MANDOGraphClassifier(nn.Module):
         return output
 
 
+def get_bug_node_type_list(nx_graph, node_ids, labels):
+    node_types = []
+    for i in node_ids:
+        if labels[i] == 1:
+            node_types.append(nx_graph.nodes[i]['node_type'])
+    return list(set(node_types))
+
+
 if __name__ == '__main__':
-    ckpt = './models/graph_detection/nodetype/unchecked_low_level_calls_han.pth'
-    graph = './graphs/graph_detection/unchecked_low_level_calls_cfg_cg_compressed_graphs.gpickle'
-    model = MANDOGraphClassifier(graph, node_feature='nodetype')
-    model.load_state_dict(torch.load(ckpt))
-    model.eval()
+    import sys
+    import os
+    from os.path import join
+    from shutil import copy
+    from sklearn import metrics
+    from .graph_utils import get_node_label
+    from ..common.process_graphs.call_graph_generator import generate_cg
+    from ..common.process_graphs.control_flow_graph_generator import generate_cfg
+    from ..common.process_graphs.combination_call_graph_and_control_flow_graph_helper import combine_cfg_cg
+    from ..common.utils import get_node_ids, get_binary_mask
+
+    curated_vulnerabilities_json_files = ['/Users/minh/Documents/2022/smart_contract/mando/ge-sc/data/smartbug-dataset/vulnerabilities.json']
+    data_type = 'buggy'
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    bug_info = {'access_control': 57, 'arithmetic': 60, 'denial_of_service': 46,
+              'front_running': 44, 'reentrancy': 71, 'time_manipulation': 50, 
+              'unchecked_low_level_calls': 95}
+    # bug_info = {'access_control': 57,}
+    # Generate graph for comming contract
+    if len(sys.argv) == 2:
+        bug_list = sys.argv[1].split(',')
+    else:
+        bug_list = list(bug_info.keys())
+    total_reports = []
+    for bug in bug_list:
+        print(bug, ''.join(['-']*(50 - len(bug))))
+        vulnerabilities_json_files = curated_vulnerabilities_json_files + [f'/Users/minh/Documents/2022/smart_contract/mando/ge-sc/data/solidifi_buggy_contracts/{bug}/vulnerabilities.json']
+        dataset = f'/Users/minh/Documents/2022/smart_contract/mando/ge-sc/experiments/ge-sc-data/source_code/{bug}/{data_type}/'
+        curated_files = [f for f in os.listdir(dataset) if f.endswith('.sol')]
+        # curated_files = ['0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2.sol']
+        graph_label = f'/Users/minh/Documents/2022/smart_contract/mando/ge-sc/experiments/ge-sc-data/source_code/{bug}/clean_{bug_info[bug]}_buggy_curated_0/graph_labels.json'
+        with open(graph_label, 'r') as f:
+            graph_labels = json.load(f)
+        graph_label_dict = {label['contract_name']: label['targets'] for label in graph_labels}
+
+        graph_ckpt = f'./sco/models/graph_detection/nodetype/{bug}_han.pth'
+        graph_graph = f'./sco/graphs/graph_detection/{bug}_cfg_cg_compressed_graphs.gpickle'
+        graph_model = MANDOGraphClassifier(graph_graph, node_feature='nodetype')
+        graph_model.load_state_dict(torch.load(graph_ckpt))
+        graph_model.eval()
+        original_graph_graph = graph_model.nx_graph
+
+        node_ckpt = f'./sco/models/node_detection/nodetype/{bug}_han.pth'
+        node_graph = f'./sco/graphs/node_detection/{bug}_cfg_cg_compressed_graphs.gpickle'
+        node_model = MANDONodeClassifier(node_graph, node_feature='nodetype')
+        node_model.load_state_dict(torch.load(node_ckpt))
+        node_model.eval()
+        original_node_graph = node_model.nx_graph
+
+        for sc in curated_files:
+            print(join(dataset, sc), ''.join(['=']*(90 - len(sc))))
+            # print(sc)
+            sm_name = 'contract_test.sol'
+            sm_path = join('./sco/_static', sm_name)
+            copy(join(dataset, sc), sm_path)
+            # sm_length = len(sm_content.split('\n'))
+            cfg_graph = generate_cfg(sm_path, ori_name=sc, vulnerabilities_json_files=vulnerabilities_json_files)
+            if cfg_graph is None:
+                print({'messages': 'Found an illegal CFG solidity smart contract'})
+                continue
+            cg_graph = generate_cg(sm_path, ori_name=sc, vulnerabilities_json_files=vulnerabilities_json_files)
+            if cg_graph is None:
+                print({'messages': 'Found an illegal CG solidity smart contract'})
+                continue
+            cfg_cg_graph = combine_cfg_cg(cfg_graph, cg_graph)
+            # print('length incoming graph: ', len(cfg_cg_graph))
+            # print(cfg_cg_graph.nodes(data=True)[0])
+
+
+            # with torch.no_grad():
+            #     logits, _ = graph_model([sc])
+            #     graph_preds = nn.functional.softmax(logits, dim=1)
+            #     _, indices = torch.max(graph_preds, dim=1)
+            #     graph_preds = indices.long().cpu().numpy()
+            # print('Detecting as already in dataset: ', graph_preds[0])
+
+            # Inference Graph level
+            extra_graph = nx.disjoint_union(original_graph_graph, cfg_cg_graph)
+            with torch.no_grad():
+                try:
+                    logits = graph_model.extend_forward(extra_graph, [sm_name])
+                except Exception as e:
+                    print(e)
+                    print({'messages': 'Found non-existent nodes/edges in the graph!'})
+                    continue
+            
+
+
+            graph_preds = nn.functional.softmax(logits, dim=1)
+            _, indices = torch.max(graph_preds, dim=1)
+            graph_preds = indices.long().cpu().numpy()
+            # if graph_preds[0] == 0:
+            #     continue 
+            print('Detecting as new contract:       ', graph_preds[0])
+
+            # Inference Node level
+            extra_graph = nx.disjoint_union(original_node_graph, cfg_cg_graph)
+            file_ids = get_node_ids(extra_graph, [sm_name])
+            node_mask = get_binary_mask(len(extra_graph), file_ids)
+            node_labels, labeled_node_ids, _ = get_node_label(extra_graph)
+            targets = torch.tensor(node_labels, device=device).cpu().numpy()
+            with torch.no_grad():
+                try:
+                    logits, _ = node_model.extend_forward(extra_graph)
+                    assert len(targets) == len(logits)
+                except Exception as e:
+                    print(e)
+                    print({'messages': 'Found non-existent nodes/edges in the graph!'})
+            node_preds = nn.functional.softmax(logits, dim=1)
+            _, indices = torch.max(node_preds, dim=1)
+            node_preds = indices.long().cpu().numpy()
+            prec_score = metrics.precision_score(targets[node_mask], node_preds[node_mask])
+            bug_node_type_list = get_bug_node_type_list(extra_graph, file_ids, node_preds)
+            if len(set(bug_node_type_list).difference(set(['CONTRACT_FUNCTION', 'ENTRY_POINT']))) == 0:
+                continue
+            print('Precision score: ', prec_score)
+            recall_score = metrics.recall_score(targets[node_mask], node_preds[node_mask])
+            print('Recall score:    ', recall_score)
+            buggy_f1_score = metrics.f1_score(targets[node_mask], node_preds[node_mask], average=None)
+            buggy_f1_score = 0 if len(buggy_f1_score) == 1 else buggy_f1_score[1]
+            print('Buggy F1 score:  ', buggy_f1_score)
+            macro_f1_score = metrics.f1_score(targets[node_mask], node_preds[node_mask], average='macro')
+            print('Macro F1 score:  ', macro_f1_score)
+            print(targets[node_mask])
+            print(get_bug_node_type_list(extra_graph, file_ids, targets))
+            print(node_preds[node_mask])
+            print(get_bug_node_type_list(extra_graph, file_ids, node_preds))
+

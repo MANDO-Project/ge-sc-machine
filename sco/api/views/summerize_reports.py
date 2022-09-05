@@ -54,7 +54,7 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
     if cfg_graph is None:
         return {'messages': 'Found an illegal solidity smart contract'}
     cg_graph = generate_cg(sm_path)
-    if cfg_graph is None:
+    if cg_graph is None:
         return {'messages': 'Found an illegal solidity smart contract'}
     cfg_cg_graph = combine_cfg_cg(cfg_graph, cg_graph)
     total_reports = []
@@ -72,9 +72,9 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
             except Exception as e:
                 logger.info(e)
                 return {'messages': 'Found non-existent nodes/edges in the graph!'}
-            preds = nn.functional.softmax(logits, dim=1)
-            _, indices = torch.max(preds, dim=1)
-            preds = indices.long().cpu().tolist()
+            graph_preds = nn.functional.softmax(logits, dim=1)
+            _, indices = torch.max(graph_preds, dim=1)
+            graph_preds = indices.long().cpu().tolist()
             report['graph_runtime'] = int((time() - begin_time) * 1000)
         # Inference Node level
         original_graph = node_model.nx_graph
@@ -92,30 +92,42 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
                 logger.info(e)
                 return {'messages': 'Found non-existent nodes/edges!'}
             file_mask = get_binary_mask(len(extra_graph), file_ids)
-            preds = logits[file_mask]
-            preds = nn.functional.softmax(preds, dim=1)
-            _, indices = torch.max(preds, dim=1)
-            preds = indices.long().cpu().tolist()
+            node_preds = logits[file_mask]
+            node_preds = nn.functional.softmax(node_preds, dim=1)
+            _, indices = torch.max(node_preds, dim=1)
+            node_preds = indices.long().cpu().tolist()
         report['node_runtime'] = int((time() - begin_time) * 1000)
-        report['number_of_bug_node'] = preds.count(1)
+        logger.info('Graph {} detection {}'.format(bug, str(graph_preds)))
+        logger.info('Node {} detection {}'.format(bug, str(node_preds)))
+        if graph_preds[0] == 0:
+            node_preds = [0] * len(node_preds)
+        report['number_of_bug_node'] = node_preds.count(1)
         report['vulnerability'] = 0 if report['number_of_bug_node'] == 0 else 1
-        report['number_of_normal_node'] = preds.count(0)
-        assert len(preds) == len(line_numbers)
+        report['vulnerability'] = graph_preds[0]
+        report['number_of_normal_node'] = node_preds.count(0)
+        assert len(node_preds) == len(line_numbers)
         # Get graph information
         links=[{"source": "%s"%str(file_edges[i][0]), "target": "%s"%str(file_edges[i][1])} for i in range(len(file_edges))]
-        results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': preds[i]} for i in range(len(line_numbers))]
+        # results = [{'id':i , 'code_lines': line_numbers[i], 'vulnerability': node_preds[i]} for i in range(len(line_numbers))]
+        results = []
         nodes=[]
         for i in range(len(line_numbers)):
             string=''
             for item in line_numbers[i]:
                 string=string+"%s"%str(item)+' '
+            _pred = node_preds[i]
+            _pred = 0 if (node_type[i] == 'FUNCTION_NAME' 
+                          or node_type[i] == 'CONTRACT_FUNCTION' 
+                          or node_type[i] == 'ENTRY_POINT'
+                          or node_type[i] == 'END_IF') else node_preds[i]
             string="id:%s,"%str(i)+ "node type: %s,"%str(node_type[i])+"\ncode lines: "+ string +"."
-            node={'id':"%s"%str(i) ,'name':string,'error':preds[i],'color':color_nodes[i],'code_lines': line_numbers[i]}
+            node={'id':"%s"%str(i) ,'name':string,'error':_pred,'color':color_nodes[i],'code_lines': line_numbers[i]}
             nodes.append(node)
+            results.append({'id':i , 'code_lines': line_numbers[i], 'vulnerability': _pred})
         graph={"nodes":nodes,"links":links}
         report['results'] = results
         report['graph'] = graph
-        bug_lines = get_bug_lines(preds, line_numbers)
+        bug_lines = get_bug_lines(node_preds, line_numbers)
         # Considering checking over here
         # assert len(bug_lines) == 0 or max(bug_lines) <= sm_length
         # Generate heatmap data series
@@ -137,4 +149,5 @@ async def extra_detect_line_level_bugs(data: ContractRequest,
                 'smart_contract_length': sm_length,
                 'heatmap_categories': CATEGORIES_OF_HEATMAP,
                 'messages': 'OK'}
+    # logger.info(total_reports)
     return response
