@@ -43,8 +43,8 @@ class NODE_CLASSIFIER_CONFIG_TIME_MANIPULATION(str, Enum):
 
 
 class NODE_CLASSIFIER_CONFIG_UNCHECKED_LOW_LEVEL_CALLS(str, Enum):
-    CHECKPOINT = join(BASE_PATH, './models/node_detection/nodetype/reentrancy_han.pth')
-    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/node_detection/reentrancy_cfg_cg_compressed_graphs.gpickle')
+    CHECKPOINT = join(BASE_PATH, './models/node_detection/nodetype/unchecked_low_level_calls_han.pth')
+    COMPRESSED_GRAPH = join(BASE_PATH, './graphs/node_detection/unchecked_low_level_calls_cfg_cg_compressed_graphs.gpickle')
 #==========================================================
 
 
