@@ -10,8 +10,17 @@ import styled, { css } from "styled-components";
 
 import Select from 'react-select';
 import x from './smart_contracts/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol'
-import y from "./smart_contracts/simple_dao.sol"
-import z from "./smart_contracts/buggy_1.sol"
+// import y from "./smart_contracts/simple_dao.sol"
+// import z from "./smart_contracts/buggy_1.sol"
+import access_control_mapping_write from './smart_contracts/access_control_mapping_write.sol'
+import arithmetic_integer_overflow_multitx_onefunc_feasible from './smart_contracts/arithmetic_integer_overflow_multitx_onefunc_feasible.sol'
+import denial_of_service_dos_simple from './smart_contracts/denial_of_service_dos_simple.sol'
+import front_running_buggy_29 from './smart_contracts/front_running_buggy_29.sol'
+import arithmetic_integer_overflow_add from './smart_contracts/arithmetic_integer_overflow_add.sol'
+import time_manipulation_ether_lotto from './smart_contracts/time_manipulation_ether_lotto.sol'
+import unchecked_low_level_calls_lotto from './smart_contracts/unchecked_low_level_calls_lotto.sol'
+// import unchecked_low_level_calls_king_of_the_ether_throne from './smart_contracts/unchecked_low_level_calls_king_of_the_ether_throne.sol'
+// import unchecked_low_level_calls_0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2 from './smart_contracts/unchecked_low_level_calls_0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2.sol'
 
 
 const BugIds = {
@@ -23,10 +32,22 @@ const BugIds = {
   time_manipulation: 5,
   unchecked_low_level_calls: 6
 }
+
+
 const optionsSelect = [
   { value: x, label: '0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol' },
-  { value: y, label: 'simple_dao.sol' },
-  { value: z, label: 'buggy_1.sol' },
+  // { value: y, label: 'simple_dao.sol' },
+  // { value: z, label: 'buggy_1.sol' },
+  { value: access_control_mapping_write, label: 'access_control_mapping_write.sol' },
+  { value: arithmetic_integer_overflow_multitx_onefunc_feasible, label: 'arithmetic_integer_overflow_multitx_onefunc_feasible.sol' },
+  { value: denial_of_service_dos_simple, label: 'denial_of_service_dos_simple.sol' },
+  { value: front_running_buggy_29, label: 'front_running_buggy_29.sol' },
+  { value: arithmetic_integer_overflow_add, label: 'arithmetic_integer_overflow_add.sol' },
+  { value: time_manipulation_ether_lotto, label: 'time_manipulation_ether_lotto.sol' },
+  { value: unchecked_low_level_calls_lotto, label: 'unchecked_low_level_calls_lotto.sol' },
+  // { value: unchecked_low_level_calls_king_of_the_ether_throne, label: 'unchecked_low_level_calls_king_of_the_ether_throne.sol' },
+  // { value: unchecked_low_level_calls_0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2, label: 'unchecked_low_level_calls_0x3f2ef511aa6e75231e4deafc7a3d2ecab3741de2.sol' },
+
 ]; 
 
 const DarkBackground = styled.div`
