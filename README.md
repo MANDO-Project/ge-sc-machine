@@ -133,7 +133,7 @@ npm start
 ```
 
 ## Citation
-Nguyen, H. H., Nguyen, N. M., Doan, H. P., Ahmadi, Z., Doan, T. N., & Jiang, L. (2022, November). MANDO-GURU: vulnerability detection for smart contract source code by heterogeneous graph embeddings. In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 1736-1740).
+Nguyen, H. H., Nguyen, N. M., Doan, H. P., Ahmadi, Z., Doan, T. N., & Jiang, L. (2022, November). *MANDO-GURU: vulnerability detection for smart contract source code by heterogeneous graph embeddings.* In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 1736-1740). [Preprint](https://hoanghnguyen.com/assets/pdf/nguyen2022fse.pdf)
 
 ```
 @inproceedings{nguyen2022fse,
