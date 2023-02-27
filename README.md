@@ -21,6 +21,29 @@ This project was created to bring out the APIs of vulnerability detection for sm
 ### RESTful APIs
 - RESTful APIs are implemented as a bridge to communicate between the Backend and the Frontend.
 
+## Citation
+Nguyen, H. H., Nguyen, N. M., Doan, H. P., Ahmadi, Z., Doan, T. N., & Jiang, L. (2022, November). *MANDO-GURU: vulnerability detection for smart contract source code by heterogeneous graph embeddings.* In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 1736-1740). [Preprint](https://hoanghnguyen.com/assets/pdf/nguyen2022fse.pdf)
+
+```
+@inproceedings{nguyen2022fse,
+  author = {Nguyen, Hoang H. and Nguyen, Nhat-Minh and Doan, Hong-Phuc and Ahmadi, Zahra and Doan, Thanh-Nam and Jiang, Lingxiao},
+  title = {MANDO-GURU: Vulnerability Detection for Smart Contract Source Code By Heterogeneous Graph Embeddings},
+  year = {2022},
+  month = {11},
+  isbn = {9781450394130},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3540250.3558927},
+  doi = {10.1145/3540250.3558927},
+  booktitle = {Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering},
+  pages = {1736-1740},
+  numpages = {5},
+  keywords = {Ethereum blockchain, graph neural networks, heterogeneous graphs, smart contracts, vulnerability detection},
+  location = {Singapore, Singapore},
+  series = {ESEC/FSE 2022}
+}
+```
+
 # Table of contents
 - [MANDO-GURU services](#mando-guru-services)
 - [Overview](#overview)
@@ -130,27 +153,4 @@ npm install --legacy-peer-deps
 - Launch app from local.
 ```
 npm start
-```
-
-## Citation
-Nguyen, H. H., Nguyen, N. M., Doan, H. P., Ahmadi, Z., Doan, T. N., & Jiang, L. (2022, November). *MANDO-GURU: vulnerability detection for smart contract source code by heterogeneous graph embeddings.* In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 1736-1740). [Preprint](https://hoanghnguyen.com/assets/pdf/nguyen2022fse.pdf)
-
-```
-@inproceedings{nguyen2022fse,
-  author = {Nguyen, Hoang H. and Nguyen, Nhat-Minh and Doan, Hong-Phuc and Ahmadi, Zahra and Doan, Thanh-Nam and Jiang, Lingxiao},
-  title = {MANDO-GURU: Vulnerability Detection for Smart Contract Source Code By Heterogeneous Graph Embeddings},
-  year = {2022},
-  month = {11},
-  isbn = {9781450394130},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/3540250.3558927},
-  doi = {10.1145/3540250.3558927},
-  booktitle = {Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering},
-  pages = {1736-1740},
-  numpages = {5},
-  keywords = {Ethereum blockchain, graph neural networks, heterogeneous graphs, smart contracts, vulnerability detection},
-  location = {Singapore, Singapore},
-  series = {ESEC/FSE 2022}
-}
 ```
