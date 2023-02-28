@@ -1,16 +1,21 @@
-# MANDO-GURU services
+# MANDO-GURU API Services - Vulnerability Detection for Smart Contract Source Code By Heterogeneous Graph Embeddings
 <p>
     <a href="https://www.python.org/" target="blank_"><img alt="python" src="https://img.shields.io/badge/python-3.8.9-green" /></a>
     <a href="https://fastapi.tiangolo.com/" target="blank_"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.78.0-yellowgreen" /></a>
     <a href="https://reactjs.org/" target="blank_"><img alt="bigquery" src="https://img.shields.io/badge/ReactJs-18.2.0-red" /></a>
     <a href="https://opensource.org/licenses/MIT" target="blank_"><img alt="mit" src="https://img.shields.io/badge/License-MIT-blue.svg" /></a>
 </p>
+<p align="center">
+<img src="./assets/MANDO_GURU.png" alt="MANDO GURU Logo" width="225" height="225" class="center">
+</p>
 <br/>
 
 # Overview
-![GE-SC overview](./assets/Overview.png)
-
-This project was created to bring out the APIs of vulnerability detection for smart contracts.
+This project was created to bring out the APIs of vulnerability detection for smart contracts based on heterogeneous graph embeddings.
+<p align="center">
+<img src="./assets/Overview.png" alt="MANDO-GURU overview" class="center">
+</p>
+<br/>
 
 ## Components
 ### Backend
