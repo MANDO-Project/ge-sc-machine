@@ -8,14 +8,12 @@
 <p align="center">
 <img src="./assets/MANDO_GURU.png" alt="MANDO GURU Logo" width="225" height="225" class="center">
 </p>
-<br/>
 
 # Overview
 This project was created to bring out the APIs of vulnerability detection for smart contracts based on heterogeneous graph embeddings.
 <p align="center">
 <img src="./assets/Overview.png" alt="MANDO-GURU overview" class="center">
 </p>
-<br/>
 
 ## Components
 ### Backend
