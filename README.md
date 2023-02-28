@@ -1,4 +1,4 @@
-# MANDO-GURU - Vulnerability Detection for Smart Contract Source Code By Heterogeneous Graph Embeddings - API Services
+# MANDO-GURU: Vulnerability Detection for Smart Contract Source Code By Heterogeneous Graph Embeddings - API Services
 <p>
     <a href="https://www.python.org/" target="blank_"><img alt="python" src="https://img.shields.io/badge/python-3.8.9-green" /></a>
     <a href="https://fastapi.tiangolo.com/" target="blank_"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.78.0-yellowgreen" /></a>
